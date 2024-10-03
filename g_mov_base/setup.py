@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'servo_subscriber = g_mov_base.servo_subscriber:main',
+            'accel_publisher = g_mov_base.accel_publisher:main',
         ],
     },
 )

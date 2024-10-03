@@ -6,12 +6,12 @@ import time
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float32
+from g_mov_msgs.msg import ServoPoseStamped
 
 class ServoSubscriber(Node):
     def __init__(self):
         super().__init__('servo_subscriber')
-        self.subs = self.create_subscription(Float32, 'servo_angle', self.ServoCallback, 10)
+        self.subs = self.create_subscription(ServoPoseStamped, 'servo_angle', self.ServoCallback, 10)
         self.servo_pin = 12
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.servo_pin, GPIO.OUT)
@@ -33,7 +33,6 @@ class ServoSubscriber(Node):
         self.duty = self.AngleToDuty(self.servo_angle)
         self.servo_pwm.ChangeDutyCycle(self.duty)
         self.get_logger().info("Servo pose updated: %d" % msg.data)
-
 
 
 def main(args=None):
