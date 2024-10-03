@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import mpu6050
-import time
 
 import rclpy
 from rclpy.node import Node

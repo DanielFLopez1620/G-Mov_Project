@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import paho.mqtt.publish as publish
+
+import rclpy
+from rclpy.node import Node
+from g_mov_msgs.msg import ServoPoseStamped
+
+class ThingSpeakServoSubs(Node):
+    def __init__(self):
+        super().__init__('thingspeak_accel_subs')
+        self.channel_id = "2667301"
+        self.mqtt_client_ID = "ER0GJDQkIQsBNR0hGjcqIyw"
+        self.mqtt_username = "ER0GJDQkIQsBNR0hGjcqIyw"
+        self.mqtt_password = "Fu4VIaTN2ZtaoqTuMUnGYv5D"
+        self.mqtt_topic = "channels/" + self.channel_id + "/publish"
+        self.mqtt_host = "mqtt3.thingspeak.com"
+        self.id_sensor = 1
+        self.variable_sensor = 1
+        self.timestamp = 0
+        self.unit_sensor = "grados"
+        self.payload = ""
+        self.subs = self.create_subscription(ServoPoseStamped, 'servo_angle', self.mqtt_callback, 10)
+
+    def __del__(self):
+        pass
+        
+    def mqtt_callback(self, msg):
+        self.timestamp = msg.header.stamp
+        self.payload = "field1=" + str(self.id_sensor) 
+        self.payload += "&field2=" + str(self.timestamp) 
+        self.payload += "&field3=" + str(self.variable_sensor) 
+        self.payload += "&field4=" + str(msg.data) 
+        self.payload += "&field5=" + str(self.unit_sensor)
+        publish.single(self.mqtt_topic,
+                payload= self.payload,
+                hostname= self.mqtt_host,
+                transport= "tcp",
+                port= 1883,
+                client_id= self.mqtt_client_ID,
+                auth = {
+                        'username':self.mqtt_username,
+                        'password': self.mqtt_password
+                        }
+                )
+        counter += 1
+        self.payload = ""
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    servo_pose_to_mqtt = ThingSpeakServoSubs()
+    rclpy.spin(servo_pose_to_mqtt)
+    rclpy.shutdown()   
+
+
+if __name__ == "__main__":
+    main()

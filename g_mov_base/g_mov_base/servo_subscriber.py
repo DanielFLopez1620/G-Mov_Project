@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import RPi.GPIO as GPIO
-import time
 
 import rclpy
 from rclpy.node import Node

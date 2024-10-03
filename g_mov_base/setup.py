@@ -22,6 +22,8 @@ setup(
         'console_scripts': [
             'servo_subscriber = g_mov_base.servo_subscriber:main',
             'accel_publisher = g_mov_base.accel_publisher:main',
+            'thingspeak_accel_sub = g_mov_base.thingspeak_accel_sub:main',
+            'thingspeak_servo_sub = g_mov_base.thingspeak_servo_sub:main',
         ],
     },
 )
