@@ -1,0 +1,96 @@
+h1 {
+    font-size: 4em;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: whitesmoke;
+}
+
+h2 {
+    font-size: 2em;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: whitesmoke;
+}
+
+header {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    margin: 0px;
+    height: 15vh;
+    background: orange;
+    border-bottom: 4px;
+    border-color: black;
+    border-style: none none solid none;
+    line-height: 40px;
+    text-align: center;
+}
+
+section {
+    background: orange;
+    border-color: orange;
+    border-style: solid;
+    border-radius: 2vh;
+}
+
+.image_vis 
+{
+    height: 52vh;
+    width: 45vw;
+    line-height: 10px;
+}
+
+.image_vis_white
+{
+    height: 40vh;
+    width: 40vw;
+    background: whitesmoke;
+    border-radius: 20px;
+    position: relative;
+    left: 2.5vw;
+    overflow: hidden;
+}
+
+.map
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 20px;
+}
+
+.status_vis
+{
+    height: 20vh;
+    width: 45vw;
+    line-height: 10px;
+}
+
+.status_vis_white
+{
+    height: 10vh;
+    width: 40vw;
+    background: whitesmoke;
+    border-radius: 20px;
+    position: relative;
+    left: 2.5vw;
+    text-align: center;
+}
+
+.status_vis_white > h2
+{
+    color: black;
+    line-height: 85px;
+}
+
+.flex_container {
+    display: flex;
+    position: absolute;
+    top: 20vh;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    gap: 20px 10px;
+}
