@@ -1,4 +1,6 @@
 from setuptools import find_packages, setup
+from glob import glob
+import os
 
 package_name = 'g_mov_base'
 
@@ -10,6 +12,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name), glob('launch/*.launch.py'))
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -24,6 +27,7 @@ setup(
             'accel_publisher = g_mov_base.accel_publisher:main',
             'thingspeak_accel_sub = g_mov_base.thingspeak_accel_sub:main',
             'thingspeak_servo_sub = g_mov_base.thingspeak_servo_sub:main',
+            'head_track_with_servo = g_mov_base.head_track_with_servo:main',
         ],
     },
 )
