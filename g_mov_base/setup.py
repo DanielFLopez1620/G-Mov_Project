@@ -27,6 +27,7 @@ setup(
             'accel_publisher = g_mov_base.accel_publisher:main',
             'thingspeak_accel_sub = g_mov_base.thingspeak_accel_sub:main',
             'thingspeak_servo_sub = g_mov_base.thingspeak_servo_sub:main',
+            'thingspeak_cam_sub = g_mov_base.thingspeak_cam_sub:main',
             'head_track_with_servo = g_mov_base.head_track_with_servo:main',
         ],
     },

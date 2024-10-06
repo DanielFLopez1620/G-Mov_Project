@@ -26,7 +26,7 @@ class ThingSpeakServoSubs(Node):
         to the topic with the user and password generated. It also initialize
         the node with the name "thingspeak_servo_sub", create the proper 
         susbcriber with a callback for interpreting the values and initialize
-        some of the mqttt params.
+        some of the mqtt params.
         """
         # Initialize node
         super().__init__('thingspeak_servo_subs')
@@ -39,7 +39,7 @@ class ThingSpeakServoSubs(Node):
         self.mqtt_topic = "channels/" + self.channel_id + "/publish"
         self.mqtt_host = "mqtt3.thingspeak.com"
 
-        # Initialize values for MQTT tranmission
+        # Initialize values for MQTT transmission
         self.id_sensor = 1
         self.variable_sensor = 1
         self.timestamp = 0
