@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>G-Mov-Interface</title>
+</head>
+<body>
+    <header> <h1> G-Mov Monitoring </h1> </header>
+    <div class="flex_container">
+        <section class="image_vis" id="map" >
+            <h2> Map Perspective: </h2>
+            <div class="image_vis_white">
+                <img class="map" src="https://sifrobot.com/wp-content/uploads/2020/03/Simultaneous-Localization-and-Mapping-SLAM.png" alt="SifRobot SLAM">
+            </div>
+        </section>
+        <section class="image_vis" id="camara">
+            <h2> Camara View: </h2>
+            <div class="image_vis_white">
+                <!--img class="map" src="https://www.homecareassistanceroseville.com/wp-content/uploads/2019/12/Results-of-Falling.jpg" alt="Adult Falling"-->
+                {% if img_data %}
+                    <img src="data:image/jpeg;base64,{{ img_data }}" alt="MQTT Image">
+                {% else %}
+                    <p>No image received yet.</p>
+                {% endif %}
+
+            </div>
+        </section>
+        <section class="status_vis" id="select_map">
+            <h2> Selected Map: </h2>
+            <div class="status_vis_white">
+                <h2>aparment_p1.pgm</h2>
+            </div>
+        </section>
+        <section class="status_vis" id="person">
+            <h2> Person State</h2>
+            <div class="status_vis_white">
+                <h2>Fall detected!</h2>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

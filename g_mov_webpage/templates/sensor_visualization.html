@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div style="width: 80%; margin: auto;">
+        <h2>Sensor Data Visualization (SensorID=2, VariableID=1)</h2>
+        <canvas id="sensorChart"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('sensorChart').getContext('2d');
+        const sensorChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [], // timestamps
+                datasets: [{
+                    label: 'Sensor Value',
+                    data: [], // sensor values
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Sensor Value'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Function to fetch data and update the chart
+        async function updateChart() {
+            const response = await fetch('/sensor_data');
+            const data = await response.json();
+
+            // Update chart data
+            sensorChart.data.labels = data.map(entry => entry.timestamp);
+            sensorChart.data.datasets[0].data = data.map(entry => entry.sensorValue);
+
+            sensorChart.update();
+        }
+
+        // Update the chart every 5 seconds
+        setInterval(updateChart, 5000);
+    </script>
+</body>
+</html>
