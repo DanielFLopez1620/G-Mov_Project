@@ -202,8 +202,50 @@ mosquitto_sub -h 1<hostname/ip> -t "test/topic" --cafile /etc/mosquitto/certs/ca
 
 # Terminal 2
 mosquitto_pub -h <hostname/ip> -t "test/topic" -m "Hello MQTT over TLS" --cafile /etc/mosquitto/certs/ca.crt -p 8883 -u <your_username> -P <your_password>
+~~~
+
+4. In the case you want to test with python, after the mqtt.Client connection, you should set the password and user:
+
+~~~Python
+client.username_pw_set("<user>", "<password>")
+~~~
+
+## Setting up raspberry pi
+
+1. Make sure you have installed mosquitto on the Raspberry Pi
+
+~~~bash
+# Raspberry Terminal
+sudo apt install mosquitto mosquitto-clients
+~~~
+
+2. You will need to pass the Certificate Authority to the pi, you can use:
+
+~~~bash
+# PC terminal
+scp /etc/mosquitto/ca_certificates/ca.crt <pi_user>@<pi_ip>:/home/<pi_user>/
+~~~
+
+
+3. Move the **ca.crt** file to the proper location:
+
+~~~bash
+# Raspberry terminal
+sudo cp ca.crt /etc/mosquitto/ca_certificates/
+~~~
+
+4. Test that everything is going OK with **mosquitto_pub** and **mosquitto_sub**
+
+~~~bash
+# Terminal 1
+mosquitto_sub -h 1<hostname/ip> -t "test/topic" --cafile /etc/mosquitto/certs/ca.crt -p 8883 -u <your_username> -P <your_password>
+
+# Terminal 2
+mosquitto_pub -h <hostname/ip> -t "test/topic" -m "Hello MQTT over TLS" --cafile /etc/mosquitto/certs/ca.crt -p 8883 -u <your_username> -P <your_password>
 
 ~~~
+
+5. You can now test with Paho in Python, you should consider removing the insecure connection part:
 
 
 
