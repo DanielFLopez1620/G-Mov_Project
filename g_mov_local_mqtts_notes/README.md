@@ -115,6 +115,98 @@ sudo killall mosquitto
 sudo systemctl start mosquitto
 ~~~
 
+12. Test that everything is going right, by publishing and subscribing on different terminals
+
+~~~bash
+# Terminal 1
+mosquitto_sub -h <hostname/ip> -t "test/topic" --cafile /etc/mosquitto/ca_certificates/ca.crt -p 8883
+# Terminal 2
+mosquitto_pub -h <hostname/ip> -t "test/topic" -m "Hello World" --cafile /etc/mosquitto/ca_certificates/ca.crt -p 8883
+~~~
+
+13. You can now run a Python code with Paho to test the publishing and subscribing, in this case if you are running from local, you should set insecure tls to avoid certain validations of paho that may block the connection.
+
+~~~python
+import paho.mqtt.client as mqtt
+import ssl
+
+broker = "<broker/hostname/ip>"  # Your PC's IP address (broker)
+port = 8883  # Port for TLS/SSL
+
+# Define topic
+topic = "test/topic"
+
+client_id = "mqtt_pub_client"
+
+ca_cert = "/etc/mosquitto/ca_certificates/ca.crt"  # CA certificate (on Raspberry Pi)
+
+def on_connect(client, userdata, flags, rc, properties):
+    if rc == 0:
+        print("Connected to broker successfully")
+    else:
+        print(f"Failed to connect, return code {rc}")
+
+def on_publish(client, userdata, mid, rc, properties):
+    print(f"Message published with mid: {mid}")
+
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=client_id)
+
+client.tls_set(ca_certs=ca_cert,
+               tls_version=ssl.PROTOCOL_TLSv1_2)
+client.tls_insecure_set(True)
+
+client.on_connect = on_connect
+client.on_publish = on_publish
+
+client.connect(broker, port)
+
+client.loop_start()
+
+message = "Hello, MQTT with TLS!"
+result = client.publish(topic, message)
+
+result.wait_for_publish()
+
+client.loop_stop()
+client.disconnect()
+
+print("Disconnected from broker")
+~~~
+
+## Additional configurations for user and password
+
+To prevent anonymous connections, you can set up a user and a password, for this you can follow the next steps:
+
+1. Set up the user and password within the proper file with the command below, make sure to remember the password linked to the username
+
+~~~bash
+sudo mosquitto_passwd  -c /etc/mosquitto/passwd <username>
+~~~
+
+2. Modify your mosquitto.conf file in order to block anonymous connections and ask for user/password by checking a given file:
+
+~~~bash
+sudo nano /etc/mosquitto/mosquitto.conf
+~~~
+
+~~~bash
+allow_anonymous false
+password_file /etc/mosquitto/passwd
+~~~
+
+3. Test with a publication and a subscription by passing the proper username and password, along with the mosquitto_pub and mosquitto_sub command
+
+~~~bash
+# Terminal 1
+mosquitto_sub -h 1<hostname/ip> -t "test/topic" --cafile /etc/mosquitto/certs/ca.crt -p 8883 -u <your_username> -P <your_password>
+
+# Terminal 2
+mosquitto_pub -h <hostname/ip> -t "test/topic" -m "Hello MQTT over TLS" --cafile /etc/mosquitto/certs/ca.crt -p 8883 -u <your_username> -P <your_password>
+
+~~~
+
+
+
 ## Troubleshooting:
 
 - Make sure your host IP is unique, for example, if you have others IP set up like for NGrok, ZeroTier, Docker. It is better to disable them to prevent issues. For example, you can use in the case of Docker:
