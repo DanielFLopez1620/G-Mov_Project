@@ -22,5 +22,10 @@ def generate_launch_description():
             package='g_mov_base',
             executable='thingspeak_servo_sub',
             name='thingspeak_servo_sub'
+        ),
+        Node(
+            package='g_mov_base',
+            executable='thingspeak_cam_sub',
+            name='thingspeak_cam_sub'
         )
     ])

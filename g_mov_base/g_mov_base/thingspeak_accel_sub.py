@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------- PYTHON REQUIRED LIBRARIES ------------------------
-import paho.mqtt.publish as publish
+import paho.mqtt.client as mqtt
 
 # ------------------------- ROS2 REQUIRED LIBRARIES ---------------------------
 import rclpy
@@ -38,12 +38,17 @@ class ThingSpeakAccelSubs(Node):
         self.mqtt_password = "Fu4VIaTN2ZtaoqTuMUnGYv5D"
         self.mqtt_topic = "channels/" + self.channel_id + "/publish"
         self.mqtt_host = "mqtt3.thingspeak.com"
-        
+
+        # Persistent client
+        self.mqtt_client = mqtt.Client(client_id=self.mqtt_client_ID)
+        self.mqtt_client.username_pw_set(self.mqtt_username, self.mqtt_password)
+        self.mqtt_client.connect(self.mqtt_host, port=1883, keepalive=60)
+        self.mqtt_client.loop_start()
+
         # Initialize values for MQTT transmission
         self.id_sensor = 2
         self.timestamp = 0
         self.unit_sensor = "m/s²"
-        self.payload = ""
 
         # Instance suscription with the callback that will send info to ThingSp
         self.subs = self.create_subscription(AccelStamped, 'accel_info', 
@@ -51,10 +56,11 @@ class ThingSpeakAccelSubs(Node):
 
     def __del__(self):
         """
-        Destructor that is void for now
+        Destructor to clean up MQTT connection
         """
-        pass
-        
+        self.mqtt_client.loop_stop()
+        self.mqtt_client.disconnect()
+
     def mqtt_callback(self, msg):
         """
         Callback that read the stamp in the value and classifies each linear
@@ -71,28 +77,17 @@ class ThingSpeakAccelSubs(Node):
         # Iterate to publish each component
         for val in accel_val:
             # Update payload with the proper fields order
-            self.payload = "field1=" + str(self.id_sensor) 
-            self.payload += "&field2=" + str(self.timestamp) 
-            self.payload += "&field3=" + str(counter) 
-            self.payload += "&field4=" + str(val) 
-            self.payload += "&field5=" + str(self.unit_sensor)
+            payload = "field1=" + str(self.id_sensor) 
+            payload += "&field2=" + str(self.timestamp) 
+            payload += "&field3=" + str(counter) 
+            payload += "&field4=" + str(val) 
+            payload += "&field5=" + str(self.unit_sensor)
 
-            # Single publish to ThingSpeak
-            publish.single(self.mqtt_topic,
-                    payload= self.payload,
-                    hostname= self.mqtt_host,
-                    transport= "tcp",
-                    port= 1883,
-                    client_id= self.mqtt_client_ID,
-                    auth = {
-                            'username':self.mqtt_username,
-                            'password': self.mqtt_password
-                            }
-                    )
-            
+            # Publish to MQTT
+            self.mqtt_client.publish(self.mqtt_topic, payload)
+
             # Update values before cycle start again
             counter += 1
-            self.payload = ""
 
 # --------------------------- MAIN IMPLEMENTATION -----------------------------
 def main(args=None):
