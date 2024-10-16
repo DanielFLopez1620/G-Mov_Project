@@ -1,4 +1,4 @@
-# MQTT with TLS on local network and localhost setup
+# MQTT with TLS on local network with IP setup
 
 After some days of experimentation, reading about Mosquitto Broker, exploring Paho Python Library and having existencial crisis with the keys for TLS by using OpenSSL. I want to include here a brief guide on how to set up the everything in order to have your MQTT broker with TLS for experiments in your local network without having to buy a online service for this if you are not sure if the implementation will work.
 
@@ -22,14 +22,13 @@ pip3 install paho-mqtt
 2. Create a Certificate Authority Key (CA) key
 
 ~~~bash
-openssl genpkey 
--algorithm RSA -out /etc/mosquitto/ca_certicates/ca.key
+sudo openssl genpkey -algorithm RSA -out /etc/mosquitto/ca_certicates/ca.key
 ~~~
 
 3. Create a self-signed CA certificate, make sure to add a **CN** name like "LocalCA" or "test" or related:
 
 ~~~bash
-openssl req -new -x509 -days 365 -key /etc/mosquitto/ca_certificate/ca.key -out /etc/mosquitto/certs/ca.crt
+sudo openssl req -new -x509 -days 365 -key /etc/mosquitto/ca_certificate/ca.key -out /etc/mosquitto/certs/ca.crt
 ~~~
 
 4. Create folder for server certificates:
@@ -41,19 +40,19 @@ sudo mkdir -p /etc/mosquitto/certs
 5. Generate a server key
 
 ~~~bash
-openssl genpkey -algorithm RSA -out /etc/mosquitto/certs/server.key
+sudo openssl genpkey -algorithm RSA -out /etc/mosquitto/certs/server.key
 ~~~
 
 6. Create a certificate signing request (CSR), make sure to add in the **CN** field the IP adress or hostname or FQDN of your server (your PC). Also do not use the same info for the company or city field, as if they are the same, the verification of the keys can be omitted, which can lead to future errors.
 
 ~~~bash
-openssl req -new -key /etc/mosquitto/certs/server.key -out /etc/mosquitto/certs/server.csr
+sudo openssl req -new -key /etc/mosquitto/certs/server.key -out /etc/mosquitto/certs/server.csr
 ~~~
 
 7. Sign the server certificate using the CA certificate:
 
 ~~~bash
-openssl x509 -req -in /etc/mosquitto/certs/server.csr -CA /etc/mosquitto/ca_certificates/ca.crt -CAkey /etc/mosquitto/certs/ca.key -CAcreateserial -out /etc/mosquitto/certs/server.crt -days 365
+sudo openssl x509 -req -in /etc/mosquitto/certs/server.csr -CA /etc/mosquitto/ca_certificates/ca.crt -CAkey /etc/mosquitto/ca_certificates/ca.key -CAcreateserial -out /etc/mosquitto/certs/server.crt -days 365
 ~~~
 
 8. Configure permissions and ownership
@@ -245,9 +244,155 @@ mosquitto_pub -h <hostname/ip> -t "test/topic" -m "Hello MQTT over TLS" --cafile
 
 ~~~
 
-5. You can now test with Paho in Python, you should consider removing the insecure connection part:
+5. You can now test with Paho in Python, by running the file [localhost_usps_tls.py](/g_mov_local_mqtts_notes/localhost_usps_tls.py)
 
+But you should still need to use the **tls_insecure_set**. That is why we need to configure a hostname that will be covered in the next title.
 
+# MQTT with TLS on local network with hostname setup
+
+## MQTT set up for PC with hostname
+
+1. In your local PC add a new host with the IP of your broker, in this case, your own IP adress.
+
+~~~bash
+sudo nano /etc/hosts
+~~~
+
+~~~bash
+# By default, systemd-resolved or libnss-myhostname will resolve
+# localhost and the system hostname if they're not specified here.
+127.0.0.1       localhost
+::1             localhost
+
+# Add the next host for example, replace x with your IP
+192.168.x.x   mqtt.local
+~~~
+
+2. Install avahi to resolve the hostname using mDNS:
+
+~~~bash
+sudo apt update
+sudo apt install avahi-daemon
+~~~
+
+3. Enable and start the service
+
+~~~bash
+sudo systemctl start avahi-daemon
+sudo systemctl enable avahi-daemon
+~~~
+
+4. Make sure that the hostname is connected 
+
+~~~bash
+ping mqtt.local
+~~~
+
+5. After this, you will need to generate new keys, you can generate them with a new name so you can use the previous one, in case you want to have the last configuration as a backup. Follow the next steps to configure the keys again.
+
+6. 
+
+~~~
+sudo openssl genpkey -algorithm RSA -out ca_certificates/ca_host.key
+~~~
+
+7. 
+
+~~~bash
+sudo openssl req -new -x509 -days 365 -key ca_certificates/ca_host.key -out ca_certificates/ca_host.crt
+~~~
+
+8. 
+
+~~~bash
+sudo openssl genpkey -algorithm RSA -out /etc/mosquitto/certs/server_host.key
+~~~
+
+9.
+
+~~~bash
+sudo openssl req -new -key /etc/mosquitto/certs/server_host.key -out /etc/mosquitto/certs/server_host.csr
+~~~
+
+10.
+
+~~~bash
+sudo openssl x509 -req -in /etc/mosquitto/certs/server_host.csr -CA /etc/mosquitto/ca_certificates/ca_host.crt -CAkey /etc/mosquitto/ca_certificates/ca_host.key -CAcreateserial -out /etc/mosquitto/certs/server_host.crt -days 365
+~~~
+
+11.
+
+~~~bash
+sudo nano /etc/mosquitto/mosquitto.conf
+~~~
+
+~~~bash
+# A full description of the configuration file is at
+# /usr/share/doc/mosquitto/examples/mosquitto.conf.example
+
+pid_file /run/mosquitto/mosquitto.pid
+
+log_type all
+log_dest file /var/log/mosquitto/mosquitto.log
+
+listener 8883 0.0.0.0
+protocol mqtt
+
+cafile /etc/mosquitto/ca_certificates/ca_host.crt
+keyfile /etc/mosquitto/certs/server_host.key
+certfile /etc/mosquitto/certs/server_host.crt 
+
+tls_version tlsv1.2
+
+allow_anonymous false
+require_certificate false
+
+password_file /etc/mosquitto/passwd
+~~~
+
+12. 
+
+~~~
+sudo systemctl restart mosquitto
+~~~
+
+## MQTT set up for raspberry with hostname
+
+1. In your local PC add a new host with the IP of your broker, in this case, your own IP adress.
+
+~~~bash
+sudo nano /etc/hosts
+~~~
+
+~~~bash
+# By default, systemd-resolved or libnss-myhostname will resolve
+# localhost and the system hostname if they're not specified here.
+127.0.0.1       localhost
+::1             localhost
+
+# Add the next host for example, replace x with your IP
+192.168.x.x   mqtt.local
+~~~
+
+2. Install avahi to resolve the hostname using mDNS:
+
+~~~bash
+sudo apt update
+sudo apt install avahi-daemon
+~~~
+
+3. Enable and start the service
+
+~~~bash
+sudo systemctl start avahi-daemon
+sudo systemctl enable avahi-daemon
+~~~
+
+4. Make sure that the hostname is connected 
+
+~~~bash
+ping mqtt.local
+~~~
 
 ## Troubleshooting:
 
