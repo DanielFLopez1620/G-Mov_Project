@@ -29,6 +29,8 @@ setup(
             'thingspeak_servo_sub = g_mov_base.thingspeak_servo_sub:main',
             'thingspeak_cam_sub = g_mov_base.thingspeak_cam_sub:main',
             'head_track_with_servo = g_mov_base.head_track_with_servo:main',
+            'mosquitto_accel_sub = g_mov_base.mosquitto_accel_sub:main',
+            'mosquitto_servo_sub = g_mov_base.mosquitto_servo_sub:main',
         ],
     },
 )
