@@ -36,7 +36,7 @@ class MosquittoServoSubs(Node):
         self.mqtt_broker = "mqtt.local"
         self.mqtt_port = 8883
         self.mqtt_topic = "sensors/servo"
-        self.mqtt_client_id = "mqtt_pub_client"
+        self.mqtt_client_id = "mqtt_pub_servo_client"
         self.mqtt_ca_cert = "/etc/mosquitto/ca_certificates/ca_host.crt"
         self.mqtt_user = "Dan1620"
         self.mqtt_password = "h1d4n16"

@@ -31,6 +31,9 @@ setup(
             'head_track_with_servo = g_mov_base.head_track_with_servo:main',
             'mosquitto_accel_sub = g_mov_base.mosquitto_accel_sub:main',
             'mosquitto_servo_sub = g_mov_base.mosquitto_servo_sub:main',
+            'mosquitto_fall_sub = g_mov_base.mosquitto_fall_sub:main',
+            'mosquitto_servo_sub_mod = g_mov_base.mosquitto_servo_sub_mod:main',
+            'thingsboard_accel_sub = g_mov_base.thingsboard_accel_sub:main',
         ],
     },
 )

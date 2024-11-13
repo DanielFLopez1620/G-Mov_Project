@@ -4,20 +4,21 @@
 # -------------------------- PYTHON REQUIRED LIBRARIES ------------------------
 import paho.mqtt.client as mqtt
 import ssl
+import datetime
 
 # ------------------------- ROS2 REQUIRED LIBRARIES ---------------------------
 import rclpy
 from rclpy.node import Node
 
 # --------------------------- ROS2 REQUIRED MESSAGES --------------------------
-from geometry_msgs.msg import AccelStamped
+from std_msgs.msg import Bool
 
 # -------------------- ACCEL SUBSCRIBER TO THINGSPEAK PUBLISHER ---------------
-class MosquittoAccelSubs(Node):
+class MosquittoFallSubs(Node):
     """
     Class that subscriber to the accelerometer topic, obtain the data and then
     publish it to the ThingSpeak platform where is located a MQTT broker with a
-    specific format that consider timeStamp, proper sensor and variable ID, the
+    specific format that cimport datatimeonsider timeStamp, proper sensor and variable ID, the
     value and the measurament.
     """
     def __init__(self):
@@ -30,13 +31,13 @@ class MosquittoAccelSubs(Node):
         mqttt params.
         """
         # Initialize node
-        super().__init__('thingspeak_accel_subs')
+        super().__init__('mosquitto_servo_subs')
 
         # Set thingspeak params for MQTT with TLS connection over mosquitto
         self.mqtt_broker = "mqtt.local"
         self.mqtt_port = 8883
-        self.mqtt_topic = "sensors/accel"
-        self.mqtt_client_id = "mqtt_pub_accel_client"
+        self.mqtt_topic = "sensors/fall"
+        self.mqtt_client_id = "mqtt_pub_fall_client"
         self.mqtt_ca_cert = "/etc/mosquitto/ca_certificates/ca_host.crt"
         self.mqtt_user = "Dan1620"
         self.mqtt_password = "h1d4n16"
@@ -53,12 +54,13 @@ class MosquittoAccelSubs(Node):
         self.mqtt_client.loop_start()
 
         # Initialize values for MQTT transmission
-        self.id_sensor = 2
+        self.id_sensor = 4 # Fall detection boolean
         self.timestamp = 0
-        self.unit_sensor = "m/s²"
+        self.unit_sensor = "boolean"
+        self.value_id = 1
 
         # Instance suscription with the callback that will send info to ThingSp
-        self.subs = self.create_subscription(AccelStamped, 'accel_info', 
+        self.subs = self.create_subscription(Bool, '/fall_detect',
             self.mqtt_callback, 10)
 
     def __del__(self):
@@ -75,27 +77,21 @@ class MosquittoAccelSubs(Node):
         sent to ThingSpeak.
         """
         # Get stamp
-        self.timestamp = msg.header.stamp
+        self.timestamp = datetime.datetime.now()
 
         # Obtain components
-        accel_val= (msg.accel.linear.x, msg.accel.linear.y, msg.accel.linear.z)
-        counter = 1
+        self.value = msg.data
 
-        # Iterate to publish each component
-        for val in accel_val:
-            # Update payload with the proper fields order
-            payload = "field1=" + str(self.id_sensor) 
-            payload += "&field2=" + str(self.timestamp) 
-            payload += "&field3=" + str(counter) 
-            payload += "&field4=" + str(val) 
-            payload += "&field5=" + str(self.unit_sensor)
+        # Update payload with the proper fields order
+        payload = "field1=" + str(self.id_sensor) 
+        payload += "&field2=" + str(self.timestamp) 
+        payload += "&field3=" + str(self.value_id) 
+        payload += "&field4=" + str(self.value) 
+        payload += "&field5=" + str(self.unit_sensor)
 
-            # Publish to MQTT
-            flag = self.mqtt_client.publish(self.mqtt_topic, payload)
-            flag.wait_for_publish()
-
-            # Update values before cycle start again
-            counter += 1
+        # Publish to MQTT
+        flag = self.mqtt_client.publish(self.mqtt_topic, payload)
+        flag.wait_for_publish()
 
 # Callback function on connect
 def on_connect(client, userdata, flags, rc):
@@ -118,7 +114,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     # Instance subscriber
-    accel_to_mqtt = MosquittoAccelSubs()
+    accel_to_mqtt = MosquittoFallSubs()
 
     # Spin node
     rclpy.spin(accel_to_mqtt)

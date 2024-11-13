@@ -13,6 +13,7 @@ from cv_bridge import CvBridge  # For traslation of images
 
 # --------------------- ROS 2 MESSAGES INTERFACES -----------------------------
 from sensor_msgs.msg import Image   # Image standard msg
+from std_msgs.msg import Bool
 
 # ------------------ CLASS FOR FALL DETECTION (NO GUI) ------------------------
 class FallDetectNoGUI(Node):
@@ -43,8 +44,10 @@ class FallDetectNoGUI(Node):
 
         # Create a subscriber to the '/image_raw' topic that calls the
         # "listener_callback" when a new msg is received.
-        self.subscription = self.create_subscription(Image, '/image_raw',
+        self.img_subs_ = self.create_subscription(Image, '/image_raw',
             self.listener_callback, 10)
+
+        self.fall_pub_ = self.create_publisher(Bool, '/fall_detect', 10)
 
         # Bridge to convert ROS image messages to OpenCV
         self.bridge = CvBridge()
@@ -53,13 +56,13 @@ class FallDetectNoGUI(Node):
         # - static_image_mode : Set as false for video stream input
         # - min_detection_confidence: 0.7 as the value to consider valid a detect.
         # - model_complixity: 2 to refer a more comple landmark accuracy
-        self.pose_video = mp.solutions.pose.Pose(static_image_mode=False, 
+        self.pose_video = mp.solutions.pose.Pose(static_image_mode=False,
             min_detection_confidence=0.7, model_complexity=2)
 
-        # Initialize variables 
+        # Initialize variables
         self.previous_avg_shoulder_height = 0  # Shoulder height to consider
         self.time1 = time.time()               # Current time
-        
+
         # Indicate that the subscriber has begun with logs
         self.get_logger().info("Fall detection (NO GUI) node has been started.")
 
@@ -74,21 +77,31 @@ class FallDetectNoGUI(Node):
             Standard ROS 2 Image message
         """
 
+        flag_fall = Bool()
+        flag_fall.data = False
+
         # Convert ROS Image message to OpenCV image
         frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-        
+
         # Process the frame for pose detection and fall detection
         modified_frame, landmarks = self.detect_pose(frame)
 
         # If landmarks were detected...
         if landmarks is not None:
             # Process the landmarks obtained to process the fall
-            fall_detected, self.previous_avg_shoulder_height = self.detect_fall(
+            fall_detected_, self.previous_avg_shoulder_height = self.detect_fall(
                 landmarks, frame.shape[0], self.previous_avg_shoulder_height)
-            
+
             # If a fall is detected log result
-            if fall_detected:
+            if fall_detected_:
                 self.get_logger().info("Fall detected!")
+
+                flag_fall.data = True
+                self.fall_pub_.publish(flag_fall)
+
+            else:
+                self.fall_pub_.publish(flag_fall)
+
 
     def detect_pose(self, frame):
         """

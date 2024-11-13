@@ -4,6 +4,11 @@
 # -------------------------- PYTHON REQUIRED LIBRARIES ------------------------
 import paho.mqtt.client as mqtt
 import ssl
+import os
+import time
+import sys
+import json
+import random
 
 # ------------------------- ROS2 REQUIRED LIBRARIES ---------------------------
 import rclpy
@@ -32,24 +37,22 @@ class MosquittoAccelSubs(Node):
         # Initialize node
         super().__init__('thingspeak_accel_subs')
 
-        # Set thingspeak params for MQTT with TLS connection over mosquitto
-        self.mqtt_broker = "mqtt.local"
-        self.mqtt_port = 8883
-        self.mqtt_topic = "sensors/accel"
-        self.mqtt_client_id = "mqtt_pub_accel_client"
-        self.mqtt_ca_cert = "/etc/mosquitto/ca_certificates/ca_host.crt"
-        self.mqtt_user = "Dan1620"
-        self.mqtt_password = "h1d4n16"
+        self.THINGSBOARD_HOST = '192.168.1.162'
+        self.ACCESS_TOKEN = '2gImYrCCe2j29PRQcij8'
+        self.INTERVAL = 2
+        self.sensor_data = {'accel_x' : 0, 'accel_y' : 0, 'accel_z' : 0}
+        self.next_reading = time.time()
 
-        # Instance client
-        self.mqtt_client = mqtt.Client(client_id=self.mqtt_client_id)
-        self.mqtt_client.tls_set(ca_certs=self.mqtt_ca_cert, tls_version=ssl.PROTOCOL_TLSv1_2)
-        self.mqtt_client.username_pw_set(self.mqtt_user, self.mqtt_password)
+        
+
+        # Mqtt client
+        self.mqtt_client = mqtt.Client()
+        self.mqtt_client.username_pw_set(self.ACCESS_TOKEN)
         self.mqtt_client.on_connect = on_connect
         self.mqtt_client.on_publish = on_publish
         
         # Make it persistent
-        self.mqtt_client.connect(self.mqtt_broker, port=self.mqtt_port, keepalive=60)
+        self.mqtt_client.connect(self.THINGSBOARD_HOST, port=1883, keepalive=60)
         self.mqtt_client.loop_start()
 
         # Initialize values for MQTT transmission
@@ -74,28 +77,12 @@ class MosquittoAccelSubs(Node):
         component received to create 3 publication (one for component) that are
         sent to ThingSpeak.
         """
-        # Get stamp
-        self.timestamp = msg.header.stamp
+        self.sensor_data['accel_x'] = msg.accel.linear.x
+        self.sensor_data['accel_y'] = msg.accel.linear.y
+        self.sensor_data['accel_z'] = msg.accel.linear.z
 
-        # Obtain components
-        accel_val= (msg.accel.linear.x, msg.accel.linear.y, msg.accel.linear.z)
-        counter = 1
+        self.mqtt_client.publish('v1/devices/me/telemetry', json.dumps(self.sensor_data), 1)
 
-        # Iterate to publish each component
-        for val in accel_val:
-            # Update payload with the proper fields order
-            payload = "field1=" + str(self.id_sensor) 
-            payload += "&field2=" + str(self.timestamp) 
-            payload += "&field3=" + str(counter) 
-            payload += "&field4=" + str(val) 
-            payload += "&field5=" + str(self.unit_sensor)
-
-            # Publish to MQTT
-            flag = self.mqtt_client.publish(self.mqtt_topic, payload)
-            flag.wait_for_publish()
-
-            # Update values before cycle start again
-            counter += 1
 
 # Callback function on connect
 def on_connect(client, userdata, flags, rc):
