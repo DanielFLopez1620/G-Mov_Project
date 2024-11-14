@@ -12,11 +12,11 @@ from rclpy.node import Node
 # --------------------------- ROS2 REQUIRED MESSAGES --------------------------
 from geometry_msgs.msg import AccelStamped
 
-# -------------------- ACCEL SUBSCRIBER TO THINGSPEAK PUBLISHER ---------------
+# -------------------- ACCEL SUBSCRIBER TO MOSQUITTO PUBLISHER ---------------
 class MosquittoAccelSubs(Node):
     """
     Class that subscriber to the accelerometer topic, obtain the data and then
-    publish it to the ThingSpeak platform where is located a MQTT broker with a
+    publish it to the Mosquitto platform where is located a MQTT broker with a
     specific format that consider timeStamp, proper sensor and variable ID, the
     value and the measurament.
     """
@@ -25,37 +25,37 @@ class MosquittoAccelSubs(Node):
         Constructor that sets up the communication by using MQTT with paho, to
         connect with the Thinkspeak broker as it provides the proper validation
         to the topic with the user and password generated. It also initialize
-        the node with the name "thingspeak_accel_sub", create the proper susbcriber
+        the node with the name "mosquitto_accel_sub", create the proper susbcriber
         with a callback for interpreting the values and initialize some of the
         mqttt params.
         """
         # Initialize node
-        super().__init__('thingspeak_accel_subs')
+        super().__init__('mosquitto_accel_subs')
 
-        # Set thingspeak params for MQTT with TLS connection over mosquitto
-        self.mqtt_broker = "mqtt.local"
-        self.mqtt_port = 8883
-        self.mqtt_topic = "sensors/accel"
-        self.mqtt_client_id = "mqtt_pub_accel_client"
-        self.mqtt_ca_cert = "/etc/mosquitto/ca_certificates/ca_host.crt"
-        self.mqtt_user = "Dan1620"
-        self.mqtt_password = "h1d4n16"
+        # Set Mosquitto params for MQTT with TLS connection over mosquitto
+        self.MQTT_BROKER = "mqtt.local"
+        self.MQTT_PORT = 8883
+        self.MQTT_TOPIC = "sensors/accel"
+        self.MQTT_CLIENT_ID = "mqtt_pub_accel_client"
+        self.MQTT_CA_CERT = "/etc/mosquitto/ca_certificates/ca_host.crt"
+        self.MQTT_USER = "Dan1620"
+        self.MQTT_PASSWORD = "h1d4n16"
 
         # Instance client
-        self.mqtt_client = mqtt.Client(client_id=self.mqtt_client_id)
-        self.mqtt_client.tls_set(ca_certs=self.mqtt_ca_cert, tls_version=ssl.PROTOCOL_TLSv1_2)
-        self.mqtt_client.username_pw_set(self.mqtt_user, self.mqtt_password)
+        self.mqtt_client = mqtt.Client(client_id=self.MQTT_CLIENT_ID)
+        self.mqtt_client.tls_set(ca_certs=self.MQTT_CA_CERT, tls_version=ssl.PROTOCOL_TLSv1_2)
+        self.mqtt_client.username_pw_set(self.MQTT_USER, self.MQTT_PASSWORD)
         self.mqtt_client.on_connect = on_connect
         self.mqtt_client.on_publish = on_publish
         
         # Make it persistent
-        self.mqtt_client.connect(self.mqtt_broker, port=self.mqtt_port, keepalive=60)
+        self.mqtt_client.connect(self.MQTT_BROKER, port=self.MQTT_PORT, keepalive=60)
         self.mqtt_client.loop_start()
 
         # Initialize values for MQTT transmission
-        self.id_sensor = 2
-        self.timestamp = 0
-        self.unit_sensor = "m/s²"
+        self.id_sensor = 2         # Sensor id for accelerometer is 2
+        self.timestamp = 0         # Initialize void stamp
+        self.unit_sensor = "m/s²"  # Acceleration units considered
 
         # Instance suscription with the callback that will send info to ThingSp
         self.subs = self.create_subscription(AccelStamped, 'accel_info', 
@@ -63,7 +63,7 @@ class MosquittoAccelSubs(Node):
 
     def __del__(self):
         """
-        Destructor to clean up MQTT connection
+        Destructor to clean up MQTT connection to the Mosquitto broker.
         """
         self.mqtt_client.loop_stop()
         self.mqtt_client.disconnect()
@@ -72,7 +72,7 @@ class MosquittoAccelSubs(Node):
         """
         Callback that read the stamp in the value and classifies each linear
         component received to create 3 publication (one for component) that are
-        sent to ThingSpeak.
+        sent to Mosquitto.
         """
         # Get stamp
         self.timestamp = msg.header.stamp
@@ -91,7 +91,7 @@ class MosquittoAccelSubs(Node):
             payload += "&field5=" + str(self.unit_sensor)
 
             # Publish to MQTT
-            flag = self.mqtt_client.publish(self.mqtt_topic, payload)
+            flag = self.mqtt_client.publish(self.MQTT_TOPIC, payload)
             flag.wait_for_publish()
 
             # Update values before cycle start again

@@ -10,9 +10,9 @@ import rclpy
 from rclpy.node import Node
 
 # --------------------------- ROS2 REQUIRED MESSAGES --------------------------
-from geometry_msgs.msg import AccelStamped
+from g_mov_msgs.msg import ServoPoseStamped
 
-# -------------------- ACCEL SUBSCRIBER TO THINGSBOARD PUBLISHER ---------------
+# ------------------- SERVO SUBSCRIBER TO THINGSBOARD PUBLISHER ---------------
 class ThingsboardAccelSubs(Node):
     """
     Class that subscriber to the accelerometer topic, obtain the data and then
@@ -24,12 +24,12 @@ class ThingsboardAccelSubs(Node):
         Constructor that sets up the communication by using MQTT with paho, to
         connect with the Thingsboard broker as it provides the proper validation
         to the topic with the user and password generated. It also initialize
-        the node with the name "thingsboard_accel_sub", create the proper susbcriber
+        the node with the name "thingsboard_servo_sub", create the proper susbcriber
         with a callback for interpreting the values and initialize some of the
         mqttt params.
         """
         # Initialize node
-        super().__init__('thingsboard_fall_subs')
+        super().__init__('thingsboard_servo_subs')
 
         # Set parameters for connection
         self.THINGSBOARD_HOST = 'mqtt.local'
@@ -37,7 +37,7 @@ class ThingsboardAccelSubs(Node):
         self.MQTT_TOPIC = 'v1/devices/me/telemetry'
 
         # Use dict to pass the data
-        self.sensor_data = {'accel_x' : 0, 'accel_y' : 0, 'accel_z' : 0}
+        self.sensor_data = {'servo' : 0}
 
         # Mqtt client connection
         self.mqtt_client = mqtt.Client()
@@ -50,7 +50,7 @@ class ThingsboardAccelSubs(Node):
         self.mqtt_client.loop_start()
 
         # Instance suscription with the callback that will send info to ThingSp
-        self.subs = self.create_subscription(AccelStamped, 'accel_info', 
+        self.subs = self.create_subscription(ServoPoseStamped, 'servo_angle',
             self.mqtt_callback, 10)
 
     def __del__(self):
@@ -63,13 +63,10 @@ class ThingsboardAccelSubs(Node):
     def mqtt_callback(self, msg):
         """
         Callback that read the stamp in the value and classifies each linear
-        component received to create 3 publication (one for component) that are
-        sent to ThingsBoard.
+        component received to create a servo angle publication to ThingsBoard
         """
         # Assgin components to the dict
-        self.sensor_data['accel_x'] = msg.accel.linear.x
-        self.sensor_data['accel_y'] = msg.accel.linear.y
-        self.sensor_data['accel_z'] = msg.accel.linear.z
+        self.sensor_data['servo'] = msg.data
 
         # Publish it to the specified topic
         self.mqtt_client.publish(self.MQTT_TOPIC, json.dumps(self.sensor_data), 1)

@@ -4,6 +4,11 @@ from launch_ros.actions import Node
 def generate_launch_description():
     return LaunchDescription([
         Node(
+            package='v4l2_camera',
+            executable='v4l2_camera_node',
+            
+        ),
+        Node(
             package='g_mov_base',
             executable='accel_publisher',
             name='accel_publisher'
@@ -14,18 +19,8 @@ def generate_launch_description():
             name='servo_subscriber'
         ),
         Node(
-            package='g_mov_base',
-            executable='thingspeak_accel_sub',
-            name='thingspeak_accel_sub'
+            package='g_mov_opencv_py',
+            executable='fall_detect_img_raw_no_gui',
+            name='fall_detect_img_raw_no_gui'
         ),
-        Node(
-            package='g_mov_base',
-            executable='thingspeak_servo_sub',
-            name='thingspeak_servo_sub'
-        ),
-        Node(
-            package='g_mov_base',
-            executable='thingspeak_cam_sub',
-            name='thingspeak_cam_sub'
-        )
     ])
