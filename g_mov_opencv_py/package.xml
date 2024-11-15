@@ -3,9 +3,11 @@
 <package format="3">
   <name>g_mov_opencv_py</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="dfelipe.lopez@gmail.com">dan1620</maintainer>
-  <license>TODO: License declaration</license>
+  <description>
+    Package oriented to the usage of Computer Vision for the g_mov_project.
+  </description>
+  <maintainer email="dfelipe.lopez@gmail.com">DanielFLopez1620</maintainer>
+  <license>BSD 3-Clause License</license>
 
   <depend>rclpy</depend>
   <depend>sensor_msgs</depend>

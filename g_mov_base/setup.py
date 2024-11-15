@@ -16,10 +16,10 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='ubuntu',
-    maintainer_email='ubuntu@todo.todo',
-    description='TODO: Package description',
-    license='TODO: License declaration',
+    maintainer='DanielFLopez1620',
+    maintainer_email='dfelipe.lopez@gmail.com',
+    description='TSet up of sensors and communication for g_mov_project',
+    license='BSD 3-Clause License',
     # tests_require=['pytest'],
     entry_points={
         'console_scripts': [
@@ -34,6 +34,8 @@ setup(
             'mosquitto_fall_sub = g_mov_base.mosquitto_fall_sub:main',
             'mosquitto_servo_sub_mod = g_mov_base.mosquitto_servo_sub_mod:main',
             'thingsboard_accel_sub = g_mov_base.thingsboard_accel_sub:main',
+            'thingsboard_servo_sub = g_mov_base.thingsboard_servo_sub:main',
+            'thingsboard_fall_sub = g_mov_base.thingsboard_fall_sub:main',
         ],
     },
 )

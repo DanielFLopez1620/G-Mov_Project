@@ -1,7 +1,7 @@
 <package format="3">
   <name>g_mov_cam</name>
   <version>0.0.0</version>
-  <description>Tutorials for image_transport.</description>
+  <description> Image transport attempts for the g_mov_project</description>
   <author>Vincent Rabaud</author>
   <maintainer email="dfelipe.lopez@gmail.com">DanielFLopez1620</maintainer>
   <license>Apache 2.0</license>

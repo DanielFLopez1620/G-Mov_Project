@@ -3,13 +3,19 @@
 <package format="3">
   <name>g_mov_base</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="ubuntu@todo.todo">ubuntu</maintainer>
-  <license>TODO: License declaration</license>
+  <description> 
+    Oriented to the sensor execution and transmission of the information of the 
+    g_mov_project, that supports MQTT communication with Mosquitto Broker, 
+    Thingsboards Broker and Thingspeak Broker.
+  </description>
+  <maintainer email="dfelipe.lopez@gmail.com">DanielFLopez1620</maintainer>
+  <license>BSD 3-Clause License</license>
 
   <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
   <depend>g_mov_msgs</depend>
-  <exec_depend>ros2launch</exec_depend>
+  <depend>ros2launch</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
