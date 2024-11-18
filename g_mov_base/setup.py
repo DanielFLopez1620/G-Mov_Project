@@ -36,6 +36,7 @@ setup(
             'thingsboard_accel_sub = g_mov_base.thingsboard_accel_sub:main',
             'thingsboard_servo_sub = g_mov_base.thingsboard_servo_sub:main',
             'thingsboard_fall_sub = g_mov_base.thingsboard_fall_sub:main',
+            'thingsboard_servo_pub = g_mov_base.thingsboard_servo_pub:main',
         ],
     },
 )

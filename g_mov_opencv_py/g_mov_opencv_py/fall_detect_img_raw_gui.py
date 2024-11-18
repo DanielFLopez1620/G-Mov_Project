@@ -75,7 +75,8 @@ class FallDetectGUI(Node):
         """
         # Convert ROS Image message to OpenCV image
         frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-        
+        frame = cv2.flip(frame, 0)
+
         # Process the frame for pose detection
         modified_frame, landmarks = self.detect_pose(frame)
         

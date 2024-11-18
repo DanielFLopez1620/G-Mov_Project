@@ -33,6 +33,8 @@ class FallDetectNoGUI(Node):
         flag_fall.data = False
         
         frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+        frame = cv2.flip(frame, 0)
+        
         modified_frame, landmarks = self.detect_pose(frame)
         
         if landmarks is not None:
@@ -48,6 +50,7 @@ class FallDetectNoGUI(Node):
                 self.fall_pub_.publish(flag_fall)
             
             # Adjust robot movement to maintain person's height in frame
+            self.get_logger().info("Adjusting pose...")
             self.adjust_distance(landmarks, frame.shape[0])
 
     def detect_pose(self, frame):
@@ -108,6 +111,7 @@ class FallDetectNoGUI(Node):
             # Person is at the desired distance, stop moving
             twist.linear.x = 0.0
             self.cmd_vel_pub.publish(twist)
+            self.get_logger().info("Not moving...")
 
 def main(args=None):
     rclpy.init(args=args)

@@ -30,7 +30,7 @@ class ServoSubscriber(Node):
         self.subs = self.create_subscription(ServoPoseStamped, 'servo_angle', self.ServoCallback, 10)
         
         # Configure GPIO and PWM
-        self.servo_pin = 12
+        self.servo_pin = 16
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.servo_pin, GPIO.OUT)
         self.servo_pwm = GPIO.PWM(self.servo_pin, 100)

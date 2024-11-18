@@ -6,7 +6,7 @@ def generate_launch_description():
         Node(
             package='v4l2_camera',
             executable='v4l2_camera_node',
-            
+            name='v4l2_camera'
         ),
         Node(
             package='g_mov_base',
@@ -23,4 +23,9 @@ def generate_launch_description():
             executable='fall_detect_img_raw_no_gui',
             name='fall_detect_img_raw_no_gui'
         ),
+        # Node(
+        #     package='g_mov_opencv_py',
+        #     executable='get_people_centered',
+        #     name='get_people'
+	    #),
     ])

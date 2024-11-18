@@ -39,6 +39,7 @@ class FallDetectNoGUI(Node):
         
         # Convert the incoming image to an OpenCV format
         frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+        frame = cv2.flip(frame, 0)
         
         # Process the frame to detect pose and landmarks
         modified_frame, landmarks = self.detect_pose(frame)

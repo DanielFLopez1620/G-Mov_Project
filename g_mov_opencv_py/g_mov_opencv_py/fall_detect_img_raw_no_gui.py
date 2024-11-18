@@ -14,6 +14,7 @@ from cv_bridge import CvBridge  # For traslation of images
 # --------------------- ROS 2 MESSAGES INTERFACES -----------------------------
 from sensor_msgs.msg import Image   # Image standard msg
 from std_msgs.msg import Bool
+from geometry_msgs.msg import Twist
 
 # ------------------ CLASS FOR FALL DETECTION (NO GUI) ------------------------
 class FallDetectNoGUI(Node):
@@ -49,6 +50,8 @@ class FallDetectNoGUI(Node):
 
         self.fall_pub_ = self.create_publisher(Bool, '/fall_detect', 10)
 
+        self.cmd_vel_pub_ = self.create_publisher(Twist, '/cmd_vel', 10)
+
         # Bridge to convert ROS image messages to OpenCV
         self.bridge = CvBridge()
 
@@ -62,6 +65,8 @@ class FallDetectNoGUI(Node):
         # Initialize variables
         self.previous_avg_shoulder_height = 0  # Shoulder height to consider
         self.time1 = time.time()               # Current time
+        self.target_person_height = 0.4  # Target height in image (as a fraction of image height)
+        self.margin = 0.05  # Allowable margin for person height to be in frame
 
         # Indicate that the subscriber has begun with logs
         self.get_logger().info("Fall detection (NO GUI) node has been started.")
@@ -82,7 +87,8 @@ class FallDetectNoGUI(Node):
 
         # Convert ROS Image message to OpenCV image
         frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-
+        frame = cv2.flip(frame, 0)
+        
         # Process the frame for pose detection and fall detection
         modified_frame, landmarks = self.detect_pose(frame)
 
@@ -95,12 +101,13 @@ class FallDetectNoGUI(Node):
             # If a fall is detected log result
             if fall_detected_:
                 self.get_logger().info("Fall detected!")
-
                 flag_fall.data = True
-                self.fall_pub_.publish(flag_fall)
 
-            else:
-                self.fall_pub_.publish(flag_fall)
+            self.fall_pub_.publish(flag_fall)
+            self.track_person(landmarks, frame.shape[1], frame.shape[0])
+        else:
+            stop_twist = Twist()
+            self.cmd_vel_pub_.publish(stop_twist)
 
 
     def detect_pose(self, frame):
@@ -191,6 +198,52 @@ class FallDetectNoGUI(Node):
         else:
             previous_avg_shoulder_height = avg_shoulder_y
             return False, previous_avg_shoulder_height
+
+    def track_person(self, landmarks, frame_width, frame_height):
+        # Orientation considerations
+        # Calculate x-position of the nose landmark (index 0)
+        nose_x = landmarks[0][0]
+        center_x = frame_width // 2  # Center of the frame
+
+        # Determine the error between nose position and center of the frame
+        error = nose_x - center_x
+        
+        # Initialize a Twist message to adjust angular velocity
+        twist_msg = Twist()
+        
+        # Define a proportional gain for angular velocity adjustment
+        k_angular = 0.002
+        
+        # If the error is outside a tolerance, set angular velocity to turn the robot
+        if abs(error) > 30:  # Tolerance in pixels
+            twist_msg.angular.z = -k_angular * error
+        else:
+            twist_msg.angular.z = 0.0  # Stop rotation if within tolerance
+        
+        # Distance considerations
+        # Use head and ankle landmarks to estimate the person’s height in the frame
+        head_y = landmarks[0][1]  # Assume landmark 0 is the head
+        ankle_y = landmarks[29][1]  # Assume landmark 29 is the left ankle
+        
+        person_height = abs(ankle_y - head_y) / frame_height  # Person height as fraction of frame height
+        
+        if person_height < (self.target_person_height - self.margin):
+            # Person is too far away, move forward
+            twist_msg.linear.x = 0.2
+            self.cmd_vel_pub_.publish(twist_msg)
+            self.get_logger().info("Moving forward to keep person in frame.")
+        
+        elif person_height > (self.target_person_height + self.margin):
+            # Person is too close, move backward
+            twist_msg.linear.x = -0.2
+            self.cmd_vel_pub_.publish(twist_msg)
+            self.get_logger().info("Moving backward to keep person in frame.")
+        
+        else:
+            # Person is at the desired distance, stop moving
+            twist_msg.linear.x = 0.0
+            self.cmd_vel_pub_.publish(twist_msg)
+            self.get_logger().info("Not moving...")
 
 # ------------------------- MAIN IMPLEMENTATION -------------------------------
 
