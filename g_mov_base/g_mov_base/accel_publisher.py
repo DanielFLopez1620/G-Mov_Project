@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 
 # -------------------- PYTHON RELATED RASPBERRY PI LIBRARIES ------------------
-import mpu6050
+import mpu6050  # Accelerometer library
 
-# ------------------------ ROS2 DEPENDENCIES ----------------------------------
-import rclpy
-from rclpy.node import Node
+# ------------------------ ROS 2 DEPENDENCIES ---------------------------------
+import rclpy                  # ROS 2 Client Library for Python
+from rclpy.node import Node   # Import base class for nodes
 
 # ----------------------- ROS2 MESSAGES REQUIRED ------------------------------
-from geometry_msgs.msg import AccelStamped
+from geometry_msgs.msg import AccelStamped  # Acceleration msg (linear/angular)
 
 # ----------------------- ACCELEROMETER PUBLISHER -----------------------------
 class AccelerometerPublisher(Node):
@@ -44,7 +44,7 @@ class AccelerometerPublisher(Node):
         """
         pass
     
-    def ReadSensorData(self):
+    def ReadSensorData(self) -> None:
         """
         Get and update the sensor values for linear acceleration, gyroscope
         info and temperature of the module.
@@ -53,7 +53,7 @@ class AccelerometerPublisher(Node):
         self.gyroscope_data = self.mpu6050.get_gyro_data()
         self.temperature_data = self.mpu6050.get_temp()
 
-    def TimerCallback(self):
+    def TimerCallback(self) -> None:
         """
         When the timer rise the flag, it call the reading of the components
         and then publish a topic by considering a stamped acceleration (which

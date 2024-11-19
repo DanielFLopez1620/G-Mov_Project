@@ -2,20 +2,20 @@
 # -*- coding: utf-8 -*-
 
 # ------------------ PYTHON RELATED RASPBERRY PI LIBRARIES --------------------
-import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO  # General Input/Output Port Management
 
-# ---------------------------- ROS2 DEPENDENCIES ------------------------------
-import rclpy
-from rclpy.node import Node
+# ---------------------------- ROS 2 DEPENDENCIES -----------------------------
+import rclpy                  # ROS 2 Client Library for Python
+from rclpy.node import Node   # Base class for nodes
 
-# -------------------------- ROS2 REQUIRED MESSAGES ---------------------------
-from g_mov_msgs.msg import ServoPoseStamped
+# -------------------------- ROS 2 REQUIRED MESSAGES --------------------------
+from g_mov_msgs.msg import ServoPoseStamped  # Custom servo message
 
 # -------------------------- SERVO ROS2 SUBSCRIBER ----------------------------
 class ServoSubscriber(Node):
     """
     Subscriber that receives angular position and set up the servo position by
-    using GPIO ports
+    using GPIO ports.
     """
     def __init__(self):
         """
@@ -27,7 +27,8 @@ class ServoSubscriber(Node):
         super().__init__('servo_subscriber')
 
         # Instance subscriber and link callback
-        self.subs = self.create_subscription(ServoPoseStamped, 'servo_angle', self.ServoCallback, 10)
+        self.subs = self.create_subscription(ServoPoseStamped, 'servo_angle', 
+            self.ServoCallback, 10)
         
         # Configure GPIO and PWM
         self.servo_pin = 16
@@ -47,17 +48,31 @@ class ServoSubscriber(Node):
         self.servo_pwm.stop()
         GPIO.cleanup()
 
-    def AngleToDuty(self, ang):
+    def AngleToDuty(self, ang) -> float:
         """
         Method that convert from angle to duty cycle for the PWM required to
         set the servo position
+
+        Params
+        ----
+        ang : float
+            Angular position objective
+
+        Return
+        ---
+        Duty cycle of the given objective
         """
         return float(ang) / 10.0 + 5.0
 
-    def ServoCallback(self, msg):
+    def ServoCallback(self, msg) -> None:
         """
         Callback that read the data of the servo position, then process the
         correct PWM to achieve the position and make the proper log.
+
+        Params
+        ----
+        msg : g_mov_msgs.msg.ServoStamped
+            Servo angle msg received
         """
         self.get_logger().info("Servo update received...\nProcessing...")
         

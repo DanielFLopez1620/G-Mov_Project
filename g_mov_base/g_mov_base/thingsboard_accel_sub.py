@@ -2,21 +2,21 @@
 # -*- coding: utf-8 -*-
 
 # -------------------------- PYTHON REQUIRED LIBRARIES ------------------------
-import paho.mqtt.client as mqtt
-import json
+import paho.mqtt.client as mqtt   # Library for MQTT connections
+import json                       # Json formatting 
 
-# ------------------------- ROS2 REQUIRED LIBRARIES ---------------------------
-import rclpy
-from rclpy.node import Node
+# ------------------------- ROS 2 REQUIRED LIBRARIES --------------------------
+import rclpy                     # ROS 2 Client Library for Python 
+from rclpy.node import Node      # Base class for nodes
 
-# --------------------------- ROS2 REQUIRED MESSAGES --------------------------
-from geometry_msgs.msg import AccelStamped
+# --------------------------- ROS 2 REQUIRED MESSAGES -------------------------
+from geometry_msgs.msg import AccelStamped  # Acceleration msg (linear/angular)
 
 # -------------------- ACCEL SUBSCRIBER TO THINGSBOARD PUBLISHER ---------------
 class ThingsboardAccelSubs(Node):
     """
     Class that subscriber to the accelerometer topic, obtain the data and then
-    publish it to the ThingSBoard platform where is located a MQTT broker and
+    publish it to the ThingsBoard platform where is located a MQTT broker and
     allow the option to graph the content.
     """
     def __init__(self):
@@ -29,23 +29,26 @@ class ThingsboardAccelSubs(Node):
         mqttt params.
         """
         # Initialize node
-        super().__init__('thingsboard_fall_subs')
+        super().__init__('thingsboard_accel_sub')
 
         # Set parameters for connection
         self.THINGSBOARD_HOST = 'mqtt.local'
         self.ACCESS_TOKEN = '2gImYrCCe2j29PRQcij8'
         self.MQTT_TOPIC = 'v1/devices/me/telemetry'
 
-        # Use dict to pass the data
-        self.sensor_data = {'accel_x' : 0, 'accel_y' : 0, 'accel_z' : 0}
+        # Use dict to pass the data, that will be then converted in json
+        self.sensor_data = {'accel_x' : 0, 'accel_y' : 0, 'accel_z' : 0,
+            'angular_x' : 0, 'angular_y' : 0, 'angular_z' : 0}
 
-        # Mqtt client connection
+        # Mqtt client connection for local hosted Thingsboard service
         self.mqtt_client = mqtt.Client()
         self.mqtt_client.username_pw_set(self.ACCESS_TOKEN)
+
+        # Set connection and publish callbacks
         self.mqtt_client.on_connect = on_connect
         self.mqtt_client.on_publish = on_publish
         
-        # Make it persistent
+        ## Make the connection and set it up persistent
         self.mqtt_client.connect(self.THINGSBOARD_HOST, port=1883, keepalive=60)
         self.mqtt_client.loop_start()
 
@@ -60,30 +63,74 @@ class ThingsboardAccelSubs(Node):
         self.mqtt_client.loop_stop()
         self.mqtt_client.disconnect()
 
-    def mqtt_callback(self, msg):
+    def mqtt_callback(self, msg) -> None:
         """
         Callback that read the stamp in the value and classifies each linear
-        component received to create 3 publication (one for component) that are
+        component received to create 6 publication (one for component) that are
         sent to ThingsBoard.
+
+        Param
+        ---
+        msg : geometry_msgs.msg.AccelStamped
+            Acceleration message received
         """
         # Assgin components to the dict
         self.sensor_data['accel_x'] = msg.accel.linear.x
         self.sensor_data['accel_y'] = msg.accel.linear.y
         self.sensor_data['accel_z'] = msg.accel.linear.z
+        self.sensor_data['angular_x'] = msg.accel.angular.x
+        self.sensor_data['angular_y'] = msg.accel.angular.y
+        self.sensor_data['angular_z'] = msg.accel.angular.z
 
-        # Publish it to the specified topic
-        self.mqtt_client.publish(self.MQTT_TOPIC, json.dumps(self.sensor_data), 1)
+        # Publish it to the specified topic and convert dictionary to json
+        self.mqtt_client.publish(self.MQTT_TOPIC, 
+            json.dumps(self.sensor_data), 1)
 
 
 # Callback function on connect
-def on_connect(client, userdata, flags, rc):
+def on_connect(client, userdata, flags, rc) -> None:
+    """
+    On Mqtt connecction, notify and create a log to specify if it was
+    succesful or returned an error code.
+
+    Some common errors are timed out (due to connection limits or being in a
+    different network) or invalid data (password/certificates)
+
+    Params
+    ---
+    client : paho.mqtt.client.Client
+        Instance client for the callback
+    
+    userdata : paho.mqtt.client.Client.user_data_set()
+        User defined data in client
+    
+    flags : paho.mqtt.client.ConnectFlags
+        Flags according the connection
+
+    rc : paho.mqtt.reasoncodes.ReasonCode
+        Codes for identification of errors
+    """
     if rc == 0:
         print("Connected to broker successfully")
     else:
         print(f"Failed to connect, return code {rc}")
 
 # Callback function on publish
-def on_publish(client, userdata, mid):
+def on_publish(client, userdata, mid) -> None:
+    """
+    If a message is published, log the current number of messages by using mid.
+
+    Params
+    ---
+    client : paho.mqtt.client.Client
+        Instance client for the callback
+    
+    userdata : paho.mqtt.client.Client.user_data_set()
+        User defined data in client
+
+    mid : int
+        Mid variable returned form the publish
+    """
     print(f"Message published with mid: {mid}")
 
 # --------------------------- MAIN IMPLEMENTATION -----------------------------
