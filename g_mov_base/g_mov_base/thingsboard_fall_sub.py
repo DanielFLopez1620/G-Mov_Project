@@ -13,7 +13,7 @@ from rclpy.node import Node      # Base class for nodes
 from std_msgs.msg import Bool    # Boolean standard message
 
 # ------------------- FALL SUBSCRIBER TO THINGSBOARD PUBLISHER ---------------
-class ThingsboardAccelSubs(Node):
+class ThingsboardFallSubs(Node):
     """
     Class that subscriber to the fall flag topic, obtain the data and then
     publish it to the ThingsBoard platform where is located a MQTT broker and
@@ -29,7 +29,7 @@ class ThingsboardAccelSubs(Node):
         mqttt params.
         """
         # Initialize node
-        super().__init__('thingsboard_fall_subs')
+        super().__init__('thingsboard_fall_sub')
 
         # Set parameters for connection
         self.THINGSBOARD_HOST = 'mqtt.local'
@@ -131,9 +131,10 @@ def main(args=None):
     Thinkspeak platform where a the broker is located.
     """
     # Initialize node
+    rclpy.init(args=args)
 
     # Instance subscriber
-    fall_to_mqtt = ThingsboardAccelSubs()
+    fall_to_mqtt = ThingsboardFallSubs()
 
     # Manage keyboard exception
     try:

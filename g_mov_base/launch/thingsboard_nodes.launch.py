@@ -26,4 +26,9 @@ def generate_launch_description():
             executable='thingsboard_fall_sub',
             name='thingsboard_fall_sub'
         ),
+        Node(
+            package='g_mov_base',
+            executable='thingsboard_servo_pub',
+            name='thingsboard_servo_pub'
+        ),
     ])
