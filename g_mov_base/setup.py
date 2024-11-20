@@ -18,7 +18,7 @@ setup(
     zip_safe=True,
     maintainer='DanielFLopez1620',
     maintainer_email='dfelipe.lopez@gmail.com',
-    description='TSet up of sensors and communication for g_mov_project',
+    description='Set up of sensors and communication for g_mov_project',
     license='BSD 3-Clause License',
     # tests_require=['pytest'],
     entry_points={

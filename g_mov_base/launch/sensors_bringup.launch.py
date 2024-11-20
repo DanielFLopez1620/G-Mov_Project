@@ -1,7 +1,15 @@
+# -------------------------- PYTHON DEPENDENCIES ------------------------------
 from launch import LaunchDescription
+
+# -------------------------- ROS 2 DEPENDENCIES  ------------------------------
 from launch_ros.actions import Node
 
+# -------------------------- LAUNCH DESCRIPTIONS ------------------------------
 def generate_launch_description():
+    """
+    Oriented to deploy all the sensors nodes (publish/subscribe) that will
+    interact with the mosquitto/thingsboard nodes.
+    """
     return LaunchDescription([
         Node(
             package='v4l2_camera',

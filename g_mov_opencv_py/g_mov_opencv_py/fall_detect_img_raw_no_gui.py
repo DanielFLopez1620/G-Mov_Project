@@ -253,14 +253,19 @@ class FallDetectNoGUI(Node):
 
 
 def main(args=None):
+    # Initialize node
     rclpy.init(args=args)
+
+    # Instantiate node 
     fall_detect_node = FallDetectNoGUI()
     
+    # Prepare management of keyboard exception
     try:
         rclpy.spin(fall_detect_node)
     except KeyboardInterrupt:
         pass
     finally:
+        # Close and shutdown
         fall_detect_node.pose_video.close()
         fall_detect_node.destroy_node()
         rclpy.shutdown()

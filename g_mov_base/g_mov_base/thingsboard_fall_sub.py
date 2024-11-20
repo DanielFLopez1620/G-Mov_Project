@@ -5,11 +5,11 @@
 import paho.mqtt.client as mqtt   # Library for MQTT connections
 import json                       # Json formatting 
 
-# ------------------------- ROS2 REQUIRED LIBRARIES ---------------------------
+# ------------------------- ROS 2 REQUIRED LIBRARIES --------------------------
 import rclpy                     # ROS 2 Client Library for Python 
 from rclpy.node import Node      # Base class for nodes
 
-# --------------------------- ROS2 REQUIRED MESSAGES --------------------------
+# --------------------------- ROS 2 REQUIRED MESSAGES -------------------------
 from std_msgs.msg import Bool    # Boolean standard message
 
 # ------------------- FALL SUBSCRIBER TO THINGSBOARD PUBLISHER ---------------
@@ -131,17 +131,20 @@ def main(args=None):
     Thinkspeak platform where a the broker is located.
     """
     # Initialize node
-    rclpy.init(args=args)
 
     # Instance subscriber
     fall_to_mqtt = ThingsboardAccelSubs()
 
-    # Spin node
-    rclpy.spin(fall_to_mqtt)
-
-    # Clean and shutdown
-    fall_to_mqtt.destroy_node()
-    rclpy.shutdown()   
+    # Manage keyboard exception
+    try:
+        # Spin node
+        rclpy.spin(fall_to_mqtt)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        # Clean and shutdown
+        fall_to_mqtt.destroy_node()
+        rclpy.shutdown()  
 
 
 if __name__ == "__main__":

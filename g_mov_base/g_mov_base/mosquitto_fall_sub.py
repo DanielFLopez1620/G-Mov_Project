@@ -159,12 +159,16 @@ def main(args=None):
     # Instance subscriber
     fall_to_mqtt = MosquittoFallSubs()
 
-    # Spin node
-    rclpy.spin(fall_to_mqtt)
-
-    # Clean and shutdown
-    fall_to_mqtt.destroy_node()
-    rclpy.shutdown()   
+    # Manage keyboard exception
+    try:
+        # Spin node
+        rclpy.spin(fall_to_mqtt)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        # Clean and shutdown
+        fall_to_mqtt.destroy_node()
+        rclpy.shutdown()
 
 
 if __name__ == "__main__":

@@ -98,12 +98,16 @@ def main(args=None):
     # Instance publisher
     servo_subscriber = ServoSubscriber()
 
-    # Spin node
-    rclpy.spin(servo_subscriber)
-
-    # Clean and shutdown
-    servo_subscriber.destroy_node()
-    rclpy.shutdown()
+    # Manage keyboard exception
+    try:
+        # Spin node
+        rclpy.spin(servo_subscriber)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        # Clean and shutdown
+        servo_subscriber.destroy_node()
+        rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

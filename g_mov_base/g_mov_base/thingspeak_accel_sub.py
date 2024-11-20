@@ -4,11 +4,11 @@
 # -------------------------- PYTHON REQUIRED LIBRARIES ------------------------
 import paho.mqtt.client as mqtt
 
-# ------------------------- ROS2 REQUIRED LIBRARIES ---------------------------
+# ------------------------- ROS 2 REQUIRED LIBRARIES --------------------------
 import rclpy
 from rclpy.node import Node
 
-# --------------------------- ROS2 REQUIRED MESSAGES --------------------------
+# --------------------------- ROS 2 REQUIRED MESSAGES -------------------------
 from geometry_msgs.msg import AccelStamped
 
 # -------------------- ACCEL SUBSCRIBER TO THINGSPEAK PUBLISHER ---------------
@@ -104,9 +104,17 @@ def main(args=None):
     # Spin node
     rclpy.spin(accel_to_mqtt)
 
-    # Clean and shutdown
-    accel_to_mqtt.destroy_node()
-    rclpy.shutdown()   
+    # Manage keyboard exception
+    try:
+        # Spin node
+        rclpy.spin(accel_to_mqtt)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        # Clean and shutdown
+        accel_to_mqtt.destroy_node()
+        rclpy.shutdown()  
+     
 
 
 if __name__ == "__main__":

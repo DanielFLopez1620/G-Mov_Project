@@ -93,12 +93,20 @@ def main(args=None):
     # Instance publisher
     accel_publisher = AccelerometerPublisher()
 
-    # Spin node
-    rclpy.spin(accel_publisher)
+    # Manage keyboard exception
+    try:
+        # Spin node
+        rclpy.spin(accel_publisher)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        # Close and shutdown
+        accel_publisher.destroy_node()
+        rclpy.shutdown()
 
-    # Close and shutdown
-    accel_publisher.destroy_node()
-    rclpy.shutdown()
+    
+
+    
 
 if __name__ == '__main__':
     main()
