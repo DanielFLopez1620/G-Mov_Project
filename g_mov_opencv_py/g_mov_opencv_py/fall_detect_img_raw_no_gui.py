@@ -65,7 +65,7 @@ class FallDetectNoGUI(Node):
         # Initialize variables
         self.previous_avg_shoulder_height = 0  # Shoulder height to consider
         self.time1 = time.time()               # Current time
-        self.target_person_height = 0.4  # Target height in image (as a fraction of image height)
+        self.target_person_height = 0.8  # Target height in image (as a fraction of image height)
         self.margin = 0.05  # Allowable margin for person height to be in frame
 
         # Indicate that the subscriber has begun with logs
@@ -212,11 +212,15 @@ class FallDetectNoGUI(Node):
         twist_msg = Twist()
         
         # Define a proportional gain for angular velocity adjustment
-        k_angular = 0.002
+        k_angular = 0.001
         
         # If the error is outside a tolerance, set angular velocity to turn the robot
         if abs(error) > 30:  # Tolerance in pixels
-            twist_msg.angular.z = -k_angular * error
+            twist_msg.angular.z = k_angular * error
+            if twist_msg.angular.z > 0.15:
+                twist_msg.angular.z = 0.15
+            elif twist_msg.angular.z < -0.15:
+                twist_msg.angular.z = -0.15
         else:
             twist_msg.angular.z = 0.0  # Stop rotation if within tolerance
         
@@ -229,13 +233,13 @@ class FallDetectNoGUI(Node):
         
         if person_height < (self.target_person_height - self.margin):
             # Person is too far away, move forward
-            twist_msg.linear.x = 0.2
+            twist_msg.linear.x = -0.2
             self.cmd_vel_pub_.publish(twist_msg)
             self.get_logger().info("Moving forward to keep person in frame.")
         
         elif person_height > (self.target_person_height + self.margin):
             # Person is too close, move backward
-            twist_msg.linear.x = -0.2
+            twist_msg.linear.x = 0.2
             self.cmd_vel_pub_.publish(twist_msg)
             self.get_logger().info("Moving backward to keep person in frame.")
         
