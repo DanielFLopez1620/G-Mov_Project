@@ -1,0 +1,117 @@
+{% block navbar_css %}
+    <!-- CSS específico para la navbar si es necesario -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbar"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbar">
+    <div class="navbar-nav">
+      <!-- Enlace a la página principal -->
+      <a class="nav-item nav-link" id="main" href="/main">Main</a>
+      {% if user.is_authenticated %}
+      <!-- Si el usuario está autenticado, muestra enlaces a Dashboard y Logout -->
+      <a class="nav-item nav-link" id="DashBoard" href="/">Dashboard</a>
+      <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
+      {% else %}
+      <!-- Si el usuario no está autenticado, muestra enlaces a Login y Sign Up -->
+      <a class="nav-item nav-link" id="login" href="/login">Login</a>
+      <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+<html lang="en">
+<head>
+    <!-- Establece la codificación de caracteres a UTF-8 para soportar caracteres especiales -->
+  <meta charset="utf-8" />
+  
+  <!-- Configura la vista para dispositivos móviles, asegurando que la página se escale correctamente -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Enlaza la fuente Roboto desde Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+  
+  <!-- Enlaza el CSS de Bootstrap para estilos predefinidos -->
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+    crossorigin="anonymous"
+  />
+  
+  <!-- Enlaza el CSS de Font Awesome para iconos -->
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    crossorigin="anonymous"
+  />
+  
+  <!-- Título de la página, que puede ser sobrescrito por bloques en plantillas heredadas -->
+  <title>{% block title %}Personalize Data{% endblock %}</title>
+  
+  <!-- Enlaza una hoja de estilo personalizada para el login -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='personalize.css') }}">
+</head>
+<body>
+  <div class="background-image">
+    <div class="container">
+      <div class="login-box p-3 shadow-lg">
+          <h1>Personalize Your Profile</h1>
+          <form method="POST">
+              <div class="form-group">
+                  <label for="first_name">Name:</label>
+                  <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="text" id="email" name="email" value="{{ user.email }}" required readonly>
+                <small class="form-text text-muted">This field cannot be changed!</small>
+            </div>
+            
+              <div class="form-group">
+                <label for="pasword">Password(Hidden) </label>
+                <input type="text" id="pasword" email="pasword" value="{{ user.pasword }}" required>
+            </div>
+              <div class="form-group">
+                  <label for="residence">Residence:</label>
+                  <input type="text" id="residence" name="residence" value="{{ user.residence }}" required>
+              </div>
+              <div class="form-group">
+                  <label for="elderName">Elder Name:</label>
+                  <input type="text" id="elderName" name="elderName" value="{{ user.elderName }}" required>
+              </div>
+              <div class="form-group">
+                <label for="elderAge">Elder Age:</label>
+                <input type="text" id="elderAge" name="elderAge" value="{{ user.elderAge }}" required>
+              </div>
+              <div class="form-group">
+                <label for="elderHeight">Elder Height(cm):</label>
+                <input type="text" id="elderHeight" name="elderHeight" value="{{ user.elderHeight }}" required>
+            </div>
+              <button type="submit">Update Profile</button>
+          </form>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                  <ul>
+                  {% for category, message in messages %}
+                      <li class="{{ category }}">{{ message }}</li>
+                  {% endfor %}
+                  </ul>
+              {% endif %}
+          {% endwith %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,350 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    padding-top: 55px;
+    margin: 0;
+    font-family: 'Roboto', sans-serif; /* Cambiado a Roboto */
+    background-color: #E6F2F0;
+    color: #eb770b;
+}
+
+/* Logo Background */
+.logo-background {
+    position: absolute; /* Permite que el logo esté en la parte posterior */
+    top: 0;
+    left: 0; /* Alinea a la izquierda */
+    width: 100%; /* Ancho completo */
+    height: auto; /* Altura completa */
+    z-index: 1; /* Asegura que esté detrás de otros elementos */
+}
+
+.logo {
+    width: 100%; /* Ajusta el logo para que ocupe el ancho completo */
+    height: 70%; /* Mantiene la proporción */
+    opacity: 0.7; /* Ajusta la opacidad del logo para que no opaque el contenido */
+}
+
+/* Header Styles */
+header {
+    text-align: center;
+    padding: 15px;
+    background-color: #eb770b; /* Color de fondo semi-transparente */
+    color: white;
+    border-radius: 0; /* Cambiado a 0 para que no haya bordes redondeados */
+    width: 100%; /* Asegura que el ancho sea del 100% */
+    position: relative; /* Mantiene el header en el flujo del documento */
+    left: 0 !important; /* Asegura que comience desde el borde izquierdo */
+    right: 0 !important;
+    margin: 0; /* Elimina el margen para que ocupe todo el ancho */
+    z-index: 2; /* Asegura que el header esté encima del logo */
+}
+
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+main {
+    text-align: justify;
+    text-justify: inter-word;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    position: relative; /* Mantiene el main en el flujo del documento */
+    z-index: 2; /* Asegura que el main esté encima del logo */
+}
+
+/* Banner Styles */
+.banner {
+    background-size: cover;
+    background-position: center;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-top: -500px;
+    border-radius: 10px;
+    z-index: 2; /* Asegura que el banner esté encima del logo */
+}
+
+.banner h2 {
+    font-size: 3em;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Information Section */
+.info-section {
+    margin-top: 50px;
+    padding: 40px;
+    background-color: #f5f5f5;
+    width: 80%;
+    max-width: 1200px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 2; /* Asegura que la sección de información esté encima del logo */
+}
+
+.info-section p {
+    font-size: 1.2em;
+    line-height: 1.6;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #eb770b;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    width: 100%; /* Asegura que el ancho sea del 100% */
+    left: 0; /* Asegura que comience desde el borde izquierdo */
+    margin: 0; /* Elimina el margen para que ocupe todo el ancho */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Sombra opcional para mejor estética */
+    z-index: 2; /* Asegura que el footer esté encima del logo */
+}
+
+.button-container {
+    margin-top: 20px;
+}
+
+.button {
+    display: inline-block;
+    padding: 15px 30px; /* Espaciado interno */
+    margin: 10px; /* Espaciado externo */
+    font-size: 1.2em;
+    color: white; /* Color del texto */
+    background-color: #007ACC; /* Color de fondo */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    text-decoration: none; /* Sin subrayado */
+    transition: background-color 0.3s; /* Transición suave para el color de fondo */
+}
+
+.button:hover {
+    opacity: 0.9;
+    color: white; /* Color del texto */
+}
+
+.feature-icon {
+    width: 4rem;
+    height: 4rem;
+    border-radius: .75rem;
+  }
+  
+  .icon-square {
+    width: 3rem;
+    height: 3rem;
+    border-radius: .75rem;
+  }
+  
+  .text-shadow-1 { text-shadow: 0 .125rem .25rem rgba(0, 0, 0, .25); }
+  .text-shadow-2 { text-shadow: 0 .25rem .5rem rgba(0, 0, 0, .25); }
+  .text-shadow-3 { text-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .25); }
+  
+  .card-cover {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+  }
+  
+  .feature-icon-small {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  /* General Footer Section Styles */
+.footer-section {
+    background-color: #f0f0f0; /* Color de fondo */
+    padding: 40px 40px;
+    margin-left: -150px;
+    margin-right: -150px;
+}
+
+.footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 50px;
+}
+
+/* Imagen en el lado izquierdo */
+.footer-image img {
+    width: 740px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Texto en el lado derecho */
+.footer-text {
+    max-width: 600px;
+    text-align: left;
+}
+
+.footer-text h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.footer-text p {
+    font-size: 1.2em;
+    line-height: 1.6;
+    color: #666;
+    text-align: center;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.parrafo {
+    text-align: justify; 
+    color: #666;
+}
+
+/* O aumentar la especificidad */
+h3 + .parrafo {
+    text-align: center;
+    color: #666;
+}
+
+
+.titulo-pilares {
+    font-size: 1.5rem; /* Ajusta este valor según sea necesario */
+}
+.contenedor-parrafo {
+    max-width: 600px;
+    max-height: 600px;
+    margin-bottom: 0; /* Mantiene el margen inferior como lo tenías */
+    text-overflow: ellipsis; /* Agrega puntos suspensivos si el texto es muy largo (solo funciona en línea) */
+}
+
+
+.contenedor-url{
+    margin-top: 50px;
+}
+
+.avance-imagen {
+    display: block; /* Cambia el comportamiento a bloque */
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    height: auto; /* Mantiene la proporción de la imagen */
+    margin-bottom: 20px;
+}
+
+.cuerpo-avance{
+    font-size: 1em;
+    line-height: 1.2;
+    color: #eb770b;
+    text-align: center;
+    text-justify: inter-word;
+
+}
+
+.descripcion{
+    text-align: justify; 
+    color: #666;
+}
+
+.descripcion-avance{
+    font-size: 1em;
+    line-height: 1.2;
+    color: #eb770b;
+    text-align: center;
+    text-justify: inter-word;
+}
+
+
+/* Modal Container (hidden by default) */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed; /* Posición fija para que siempre esté centrado */
+    z-index: 1000; /* Asegura que el modal esté encima de otros elementos */
+    left: 50%;
+    top: 50%;
+    width: 100%; /* Ajusta el ancho del modal */
+    height: auto; /* Permite que la altura se ajuste automáticamente */
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente */
+    justify-content: center;
+    align-items: center;
+    transform: translate(-50%, -50%); /* Centramos el modal */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 100%; /* Máximo ancho del modal */
+    text-align: center;
+    position: relative;
+}
+
+/* Close Button */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: #aaa;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Imagen dentro del modal */
+.modal-content img {
+    max-width: 100%; /* Asegura que la imagen no exceda el ancho del modal */
+    height: auto;
+    border-radius: 10px;
+}
+
+  
+
+
+
+
+
+/* Para dispositivos móviles, hacer que se apilen verticalmente */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-image img {
+        width: 100%;
+        max-width: 500px;
+        margin-bottom: 20px;
+    }
+
+    .footer-text {
+        text-align: center;
+        text-align: justify;
+        text-justify: inter-word;
+    }
+
+}

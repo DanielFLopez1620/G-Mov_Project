@@ -1,0 +1,133 @@
+<span style="font-family: verdana, geneva, sans-serif;">
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <!-- Establece la codificación de caracteres a UTF-8 para soportar caracteres especiales -->
+      <meta charset="utf-8" />
+      
+      <!-- Configura la vista para dispositivos móviles, asegurando que la página se escale correctamente -->
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      
+      <!-- Enlaza la fuente Roboto desde Google Fonts -->
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+      
+      <!-- Enlaza el CSS de Bootstrap para estilos predefinidos -->
+      <link
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+        crossorigin="anonymous"
+      />
+      
+      <!-- Enlaza el CSS de Font Awesome para iconos -->
+      <link
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        crossorigin="anonymous"
+      />
+      
+      <!-- Título de la página, que puede ser sobrescrito por bloques en plantillas heredadas -->
+      <title>{% block title %}DASHBOARD{% endblock %}</title>
+  
+      <!-- Enlaza una hoja de estilo personalizada para el dashboard -->
+      <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+      
+      <!-- Enlace adicional a Font Awesome (versión 5) -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+  </head>
+  <body>
+      <!-- Manejo de mensajes flash, que pueden ser errores o éxitos -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% if category == 'error' %}
+          <div class="alert alert-danger alert-dismissable fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% else %}
+          <div class="alert alert-success alert-dismissable fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% endwith %}
+  
+      <!-- Contenedor principal para el contenido de la página -->
+      <div class="container">
+          {% block content %}{% endblock %}
+      </div>
+      
+      <!-- Enlaza jQuery, necesario para el funcionamiento de Bootstrap -->
+      <script
+        src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"
+      ></script>
+      
+      <!-- Enlaza Popper.js, que es necesario para algunos componentes de Bootstrap -->
+      <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"
+      ></script>
+      
+      <!-- Enlaza el JavaScript de Bootstrap -->
+      <script
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"
+      ></script>
+      
+      <!-- Contenedor para la navegación del dashboard -->
+      <div class="container">
+        <nav>
+          <ul>
+            <li><a href="/" class="logo">
+              <span class="nav-item">DASHBOARD</span>
+            </a></li>
+            <li class="personalize-container">
+              <a class="nav-item nav-link" href="/main">
+                  <i class="fas fa-home"></i>
+                  Home
+              </a>
+          </li>
+            <li class="personalize-container">
+              <a class="nav-item nav-link" href="/personalize">
+                  <i class="fas fa-user-edit"></i>
+                  Personalize Profile
+              </a>
+          </li>
+          <li class="personalize-container">
+            <a class="nav-item nav-link" href="/logout">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </li>
+          </ul>
+        </nav>
+   
+        <!-- Sección principal del dashboard -->
+       <section class="main">
+            <div class="contenedor-dash">
+                <h1 class="titulo-grande">GMOV Guardian Del Movimiento</h1>
+            </div>
+            <div class="contenedor-dash">
+                <a href="http://192.168.1.162:8080" class="btn btn-primary btn-lg">Ingresar a tu Dashboard</a>
+            </div>
+            <div class="contenedor-dash">
+              <h1 class="titulo-grande2">Por seguridad tendrás que iniciar sesión nuevamente con las credenciales otorgadas por nosotros</h1>
+          </div>
+    </section>
+    
+
+      </div>
+  </body>
+  </html>
+  

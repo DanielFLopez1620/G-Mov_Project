@@ -1,0 +1,153 @@
+{% block navbar_css %}
+    <!-- CSS específico para la navbar si es necesario -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbar"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbar">
+    <div class="navbar-nav">
+      <!-- Enlace a la página principal -->
+      <a class="nav-item nav-link" id="main" href="/main">Main</a>
+      {% if user.is_authenticated %}
+      <!-- Si el usuario está autenticado, muestra enlaces a Dashboard y Logout -->
+      <a class="nav-item nav-link" id="DashBoard" href="/">Dashboard</a>
+      <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
+      {% else %}
+      <!-- Si el usuario no está autenticado, muestra enlaces a Login y Sign Up -->
+      <a class="nav-item nav-link" id="login" href="/login">Login</a>
+      <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+<head>
+  <!-- Establece la codificación de caracteres a UTF-8 para soportar caracteres especiales -->
+  <meta charset="utf-8" />
+  
+  <!-- Configura la vista para dispositivos móviles, asegurando que la página se escale correctamente -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Enlaza la fuente Roboto desde Google Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+  
+  <!-- Enlaza el CSS de Bootstrap para estilos predefinidos -->
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+    crossorigin="anonymous"
+  />
+  
+  <!-- Enlaza el CSS de Font Awesome para iconos -->
+  <link
+    rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    crossorigin="anonymous"
+  />
+  
+  <!-- Título de la página, que puede ser sobrescrito por bloques en plantillas heredadas -->
+  <title>{% block title %}Log In{% endblock %}</title>
+  
+  <!-- Enlaza una hoja de estilo personalizada para el login -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+<div class="flash-container">
+  <!-- Manejo de mensajes flash, que pueden ser errores o éxitos -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        {% if category == 'error' %}
+          <div class="alert alert-danger alert-dismissable fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% else %}
+          <div class="alert alert-success alert-dismissable fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
+
+<!-- Contenedor principal para el contenido de la página -->
+<div class="container">{% block content %} {% endblock %}</div>
+
+<!-- Enlaza jQuery, necesario para el funcionamiento de Bootstrap -->
+<script
+  src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+  crossorigin="anonymous"
+></script>
+
+<!-- Enlaza Popper.js, que es necesario para algunos componentes de Bootstrap -->
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+  integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+  crossorigin="anonymous"
+></script>
+
+<!-- Enlaza el JavaScript de Bootstrap -->
+<script
+  src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+  crossorigin="anonymous"
+></script>
+
+<!-- Contenedor para el formulario de inicio de sesión -->
+<div class="background-image">
+  <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="login-box p-5 shadow-lg">
+      <h3 class="text-center mb-4">Login</h3>
+      <form method="POST">
+        <div class="form-group mb-3">
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            placeholder="Enter email"
+            required
+          />
+        </div>
+        <div class="form-group mb-3">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            placeholder="Enter password"
+            required
+          />
+        </div>
+        <div class="form-group mb-3">
+          <input type="checkbox" id="remember" name="remember">
+          <label for="remember">Remember Me</label>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Login</button>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>
