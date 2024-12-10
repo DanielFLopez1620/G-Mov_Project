@@ -48,10 +48,10 @@ Next semester, according to the develop of the career of the members, have the m
 
 This project was originally made by:
 
-- Daniel Felipe López Escobar : [DanielFLopez1620]()
+- Daniel Felipe López Escobar : [DanielFLopez1620](https://github.com/DanielFLopez1620)
 
-- Guillermo Aguilera. []
+- Guillermo Aguilera [Best-Gagil](https://github.com/Best-Gagil)
 
-- Cristhian Jose Narvaez. []
+- Cristhian Jose Narvaez. [Criss19](https://github.com/Crisss19)
 
-This project was made by members of the [IEEE RAS Javeriana Student Chapter](https://linktr.ee/rasjaverianaieee). We would like to thank them for your unconditional support and the loan of Turtlebot3.
+This project was made by members of the [IEEE RAS Pontificia Unversidad Javeriana Student Chapter](https://linktr.ee/rasjaverianaieee). We would like to thank for the unconditional support and the loan of Turtlebot3 to the directive member of the Student Chapter.
