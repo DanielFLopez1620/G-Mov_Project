@@ -15,6 +15,7 @@
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>g_mov_msgs</depend>
+  <depend>g_mov_opencv_py</depend>
   <depend>ros2launch</depend>
 
   <test_depend>ament_copyright</test_depend>
