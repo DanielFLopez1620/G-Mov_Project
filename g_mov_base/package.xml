@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>g_mov_base</name>
+  <version>1.0.0</version>
+  <description> 
+    Oriented to the sensor execution and transmission of the information of the 
+    g_mov_project, that supports MQTT communication with Mosquitto Broker, 
+    Thingsboards Broker and Thingspeak Broker.
+  </description>
+  <maintainer email="dfelipe.lopez@gmail.com">DanielFLopez1620</maintainer>
+  <license>BSD 3-Clause License</license>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>g_mov_msgs</depend>
+  <depend>g_mov_opencv_py</depend>
+  <depend>ros2launch</depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
