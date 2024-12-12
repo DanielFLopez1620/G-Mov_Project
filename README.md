@@ -1,14 +1,24 @@
 # G-Mov Project
 
-G-Mov comes from Guardian of Movement. It is a project that aims to integrates robotics in the care of elderly people by combining ROS 2 and IoT for a dashbaord visualization over a local network. By adding a modular kit composed of a pi camera, a servo and a accelerometer to track people fall detection by implementing Computer Vision (CV) with the movement of a robot.
+G-Mov comes from Guardian of Movement. It is a project that aims to integrates robotics in the care of elderly people by combining ROS 2 and IoT for a dashbaord visualization over a local network. By adding a modular kit composed of a pi camera, a servo and a accelerometer to ROS 2 robots with the objective to track people fall detection by implementing Computer Vision (CV) and also using the movement of the robot.
 
 ![g_mov_module](/resources/g_mov_module.png)
 
-For this first version, we have used the [Turtlebot3 Burger](https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/). You can find a demo video down below:
+For this first version, we have used the [Turtlebot3 Burger](https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/). You can find the demo videos below:
 
-![g_mov_short_video](/resources/g_mov_project_short_video.gif)
+- People tracking:
 
-This video was recorded at double speed. If you want to check the original version, you can go to the [G-Mov Phase 3 | Youtube Video](https://youtu.be/IMeLtWwy5p4)
+![g_mov_people_tracking](/resources/g_mov_part_1.gif)
+
+- Fall detection:
+
+![g_mov_fall_detection](/resources/g_mov_part_2.gif)
+
+- Dashboard servo control:
+
+![g_mov_servo_control](/resources/g_mov_part_3.gif)
+
+These videos were recorded at normal speed. If you want to check the original video, you can go to the [G-Mov Phase 3 | Youtube Video](https://youtu.be/IMeLtWwy5p4)
 
 ## Technical Information:
 

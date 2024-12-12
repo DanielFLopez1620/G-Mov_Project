@@ -2,7 +2,7 @@ import paho.mqtt.client as mqtt
 import ssl
 
 # Define broker and port
-broker = "192.168.1.162"  # Your PC's IP address (broker)
+broker = "x.x.x.x"  # Your PC's IP address (broker)
 port = 8883  # Port for TLS/SSL
 
 # Define topic

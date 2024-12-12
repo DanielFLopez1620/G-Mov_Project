@@ -74,14 +74,18 @@ cd ~/ros2_ws
 rosdep install --from-paths src --ignore-src --rosdistro humble -y
 ~~~
 
-3. Build the packages
+3. Ensure that you submitted the proper user/password, hosts and broker credentials before compiling and launching your nodes. This applies for the Mosquitto nodes with the corresponding Mosquitto Broker configuration and the Thingsboard Broker / Database configurations. 
+
+NOTE: If you haven't started your Mosquitto or Thingsboard Services, check [g_mov_local_mqtts_notes](/g_mov_local_mqtts_notes/README.md) for more information.
+
+4. Build the packages
 
 ~~~bash
 cd ~/ros2_ws
 colcon build --packages-select g_mov_msgs g_mov_opencv_py g_mov_base
 ~~~
 
-4. Run the launch:
+5. Run the launch:
 
 ~~~bash
 source ~/ros2_ws/install/setup.bash
