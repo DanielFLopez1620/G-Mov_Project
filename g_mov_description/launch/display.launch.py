@@ -42,7 +42,7 @@ def generate_launch_description():
         name='joint_state_publisher_gui'
     )
 
-    rviz_config_file = os.path.join(pkg_description, 'rviz', 'model_viz.rviz')
+    rviz_config_file = os.path.join(pkg_description, 'rviz', 'config.rviz')
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',

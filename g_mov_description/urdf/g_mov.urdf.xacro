@@ -1,9 +1,12 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="orion">
 
-   <!-- Include other files -->
+    <!-- Include other files -->
+    <xacro:include filename="$(find g_mov_description)/urdf/g_mov_materials.urdf.xacro"/>
     <xacro:include filename="$(find g_mov_description)/urdf/g_mov_macros.urdf.xacro"/>
 
     <link name="base_link"/>
+    <xacro:g_mov_assem parent="base_link" spacer="m3x10" offset="${0.033/2}" 
+        x="0" y="0" z="0"/>
 
 </robot>
