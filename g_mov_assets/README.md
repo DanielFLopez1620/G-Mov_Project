@@ -1,5 +1,9 @@
-# g_mov_description
+# g_mov_asssets
 
-For now, there is no a proper description ROS 2 package, but rather a collection of files if you are interesting in replicate and modify the project. The software used was [FreeCad](https://www.freecad.org/) and it was selected due as it is a Open Source CAD tool and the option to install it in Debian Systems.
+In this directory, you can find the cad files and the assembly for the **G-Mov Project** which was made using [FreeCad](https://www.freecad.org/) 1.0.0.
 
-You can also find the .stl files in case you do not want to use FreeCad, and even you can print the [base_gmov_body](/g_mov_description/mesh_files/base_gmov-Body.stl) to integrate it to your [Turtlebot3 Burger](https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/).
+The directory [cad_files](/g_mov_assets/cad_files/) includes all the source files in the .FCStd extension.
+
+The directory [iges_files](/g_mov_assets/iges_files/) includes exported .iges files inc ase you want to make modifications to the project with a different CAD software.
+
+Feel free to modify and generate new versions of this project and share it with us and the community!
