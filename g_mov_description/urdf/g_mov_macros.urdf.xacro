@@ -1,11 +1,9 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-<!--///////////////////// M3 x 10 SPACERS MACROS ///////////////////////-->
-
+    <!--///////////////////// GENERIC SPACERS MACROS ///////////////////////-->
+    <!-- ...................... Single spacers ............................ -->
     <xacro:macro name="generic_spacer"
             params="id parent element front side x y z">
-        
-        <!-- Link Spacer -->
         <link name="${id}_${element}_${front}${side}">
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -44,14 +42,13 @@
             </xacro:if>
         </inertial>
         </link>
-        <!-- Joint Spacer -->
         <joint name="${id}_${element}_${front}${side}_joint" type="fixed">
             <parent link="${parent}"/>
             <child link="${id}_${element}_${front}${side}"/>
             <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
         </joint>
     </xacro:macro>
-
+    
     <!-- 4 symetric hex spacers by considering x/y axis -->
     <xacro:macro name="x4xgeneric_spacer" 
                 params="id element parent offset_x offset_y x y z">
@@ -65,7 +62,29 @@
             front="r" side="l" x="${x - offset_x}" y="${y - offset_y}" z="${z}"/>
     </xacro:macro>
 
-    <xacro:macro name="g_mov_assem" params="parent spacer offset x y z">
+    <!-- /////////////////////// Sensors macros ////////////////////////// -->
+    <xacro:macro name="add_cam_links" params="x y z R P Y parent">
+        <!-- ................... Camera sensors links .................. -->
+        <link name="g_mov_cam_link"/>
+
+        <joint name="g_mov_cam_joint" type="fixed">
+            <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+            <parent link="${parent}"/>
+            <child link="g_mov_cam_link"/>
+        </joint>
+
+        <link name="g_mov_cam_link_optical"/>
+
+        <joint name="g_mov_optical_joint" type="fixed">
+            <origin xyz="0 0 0" rpy="${R} ${P} ${Y}"/>
+            <parent link="g_mov_cam_link"/>
+            <child link="g_mov_cam_link_optical"/>
+        </joint>
+    </xacro:macro>
+
+    <!-- //////////////////////////// Assemblys macros ////////////////////////// -->
+    <xacro:macro name="g_mov_assem" params="parent spacer offset x y z joint_prefix">
+        <!-- Properties -->
         <xacro:property name="heigh_level" value="0.005"/>
         <xacro:if value="${spacer == 'm3x20'}">
             <xacro:property name="heigh_level" value="0.020"/>
@@ -77,6 +96,7 @@
             <xacro:property name="heigh_level" value="0.006"/>
         </xacro:if>
 
+        <!-- Spacers -->
         <xacro:x4xgeneric_spacer id="${spacer}" element="${parent}" parent="${parent}"
             offset_x="${0.06365/2}" offset_y="${offset}" x="${x}" y="${y}" z="${z}"/>
 
@@ -105,7 +125,6 @@
                         izz="4.576666666666666e-06"/>
         </inertial>
         </link>
-        <!-- Joint Accel Base -->
         <joint name="accel_base_joint" type="fixed">
             <parent link="${parent}"/>
             <child link="accel_base"/>
@@ -137,13 +156,13 @@
                         izz="5.367750071525579e-07"/>
         </inertial>
         </link>
-        <!-- Joint Accel -->
         <joint name="accel_joint" type="fixed">
             <parent link="accel_base"/>
             <child link="accel"/>
             <origin xyz="0.00025 0 0.00175" rpy="0 0 0"/>
         </joint>
 
+        <!-- Spacers -->
         <xacro:x4xgeneric_spacer id="${spacer}" element="accel_base" parent="accel_base"
             offset_x="${0.06365/2}" offset_y="${offset}" x="0" y="0" z="0.00175"/>
 
@@ -172,7 +191,6 @@
                         izz="6.8649999999999995e-06"/>
         </inertial>
         </link>
-        <!-- Joint servo base -->
         <joint name="servo_base_joint" type="fixed">
             <parent link="accel_base"/>
             <child link="servo_base"/>
@@ -204,7 +222,6 @@
                         izz="1.3568315958913178e-05"/>
         </inertial>
         </link>
-        <!-- Joint servo -->
         <joint name="servo_joint" type="fixed">
             <parent link="servo_base"/>
             <child link="servo"/>
@@ -236,8 +253,7 @@
                         izz="1.5995363227322013e-07"/>
         </inertial>
         </link>
-        <!-- Joint servo conn -->
-        <joint name="servo_conn_joint" type="revolute">
+        <joint name="${joint_prefix}_servo_conn_joint" type="revolute">
             <parent link="servo"/>
             <child link="servo_conn"/>
             <limit lower="${-pi/4}" upper="${pi/6}" effort="1.0" velocity="1.0"/>
@@ -270,7 +286,6 @@
                         izz="3.1123333333333332e-06"/>
         </inertial>
         </link>
-        <!-- Joint Pi Cam Support -->
         <joint name="picam_sup_joint" type="fixed">
             <parent link="servo_conn"/>
             <child link="picam_sup"/>
@@ -302,12 +317,14 @@
                         izz="3.1123333333333332e-06"/>
         </inertial>
         </link>
-        <!-- Joint Pi Cam -->
         <joint name="picam_joint" type="fixed">
             <parent link="picam_sup"/>
             <child link="picam"/>
             <origin xyz="0.038 -0.004 -0.0275" rpy="0 0 0"/>
         </joint>
+        <!-- Camera reference -->
+        <xacro:add_cam_links x="0.0065" y="-0.003" z="0" R="0" P="${pi/2}" Y="0"
+          parent="picam"/>
 
     </xacro:macro>
 </robot>
