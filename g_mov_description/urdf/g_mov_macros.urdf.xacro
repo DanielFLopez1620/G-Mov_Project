@@ -47,6 +47,12 @@
             <child link="${id}_${element}_${front}${side}"/>
             <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
         </joint>
+        <xacro:if value="${gazebo}">
+            <gazebo reference="${id}_${element}_${front}${side}">
+                <mu1>1.0</mu1>
+                <mu2>1.0</mu2>
+            </gazebo>
+        </xacro:if>
     </xacro:macro>
     
     <!-- 4 symetric hex spacers by considering x/y axis -->
@@ -68,7 +74,7 @@
         <link name="g_mov_cam_link"/>
 
         <joint name="g_mov_cam_joint" type="fixed">
-            <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
+            <origin xyz="${x} ${y} ${z}" rpy="${-pi/2} 0 0"/>
             <parent link="${parent}"/>
             <child link="g_mov_cam_link"/>
         </joint>
@@ -130,6 +136,12 @@
             <child link="accel_base"/>
             <origin xyz="${x} ${y} ${z + heigh_level}" rpy="0 0 0"/>
         </joint>
+        <xacro:if value="${gazebo}">
+            <gazebo reference="accel_base">
+                <mu1>1.0</mu1>
+                <mu2>1.0</mu2>
+            </gazebo>
+        </xacro:if>
 
         <!-- Link Accel -->
         <link name="accel">
@@ -161,6 +173,12 @@
             <child link="accel"/>
             <origin xyz="0.00025 0 0.00175" rpy="0 0 0"/>
         </joint>
+        <xacro:if value="${gazebo}">
+            <gazebo reference="accel">
+                <mu1>1.0</mu1>
+                <mu2>1.0</mu2>
+            </gazebo>
+        </xacro:if>
 
         <!-- Spacers -->
         <xacro:x4xgeneric_spacer id="${spacer}" element="accel_base" parent="accel_base"
@@ -196,6 +214,12 @@
             <child link="servo_base"/>
             <origin xyz="0.00025 0 ${0.00175+heigh_level}" rpy="0 0 0"/>
         </joint>
+        <xacro:if value="${gazebo}">
+            <gazebo reference="servo_base">
+                <mu1>1.0</mu1>
+                <mu2>1.0</mu2>
+            </gazebo>
+        </xacro:if>
 
         <!-- Link servo -->
         <link name="servo">
@@ -227,6 +251,12 @@
             <child link="servo"/>
             <origin xyz="0 -0.0185 ${0.00175 + 0.01}" rpy="0 0 0"/>
         </joint>
+        <xacro:if value="${gazebo}">
+            <gazebo reference="servo">
+                <mu1>1.0</mu1>
+                <mu2>1.0</mu2>
+            </gazebo>
+        </xacro:if>
 
         <!-- Link servo conn -->
         <link name="servo_conn">
@@ -260,6 +290,27 @@
             <axis xyz="0.0 0.0 1.0"/>
             <origin xyz="0.01 0.042 0" rpy="${-pi/2} 0 0"/>
         </joint>
+        <xacro:if value="${gazebo}">
+        <gazebo>
+            <plugin
+                filename="gz-sim-joint-position-controller-system"
+                name="gz::sim::systems::JointPositionController">
+                <joint_name>${joint_prefix}_servo_conn_joint</joint_name>
+                <topic>g_mov_servo</topic>
+                <p_gain>1</p_gain>
+                <i_gain>0.1</i_gain>
+                <d_gain>0.01</d_gain>
+                <i_max>1</i_max>
+                <i_min>-1</i_min>
+                <cmd_max>1000</cmd_max>
+                <cmd_min>-1000</cmd_min>
+            </plugin>
+        </gazebo>
+            <gazebo reference="servo_conn">
+                <mu1>1.0</mu1>
+                <mu2>1.0</mu2>
+            </gazebo>
+        </xacro:if>
 
         <!-- Link Pi Cam Support -->
         <link name="picam_sup">
@@ -291,6 +342,12 @@
             <child link="picam_sup"/>
             <origin xyz="0 0 0.005" rpy="0 0 0"/>
         </joint>
+        <xacro:if value="${gazebo}">
+            <gazebo reference="picam_sup">
+                <mu1>1.0</mu1>
+                <mu2>1.0</mu2>
+            </gazebo>
+        </xacro:if>
 
         <!-- Link Pi Cam -->
         <link name="picam">
@@ -322,9 +379,55 @@
             <child link="picam"/>
             <origin xyz="0.038 -0.004 -0.0275" rpy="0 0 0"/>
         </joint>
+        <xacro:if value="${gazebo}">
+            <gazebo reference="picam_sup">
+                <mu1>1.0</mu1>
+                <mu2>1.0</mu2>
+            </gazebo>
+        </xacro:if>
         <!-- Camera reference -->
         <xacro:add_cam_links x="0.0065" y="-0.003" z="0" R="0" P="${pi/2}" Y="0"
           parent="picam"/>
-
+    
+        <xacro:if value="${gazebo}">
+            <gazebo reference="g_mov_cam_link">
+                <sensor name="camera" type="camera">
+                    <!-- Data based on : -->
+                    <!-- https://static.chipdip.ru/lib/664/DOC001664108.pdf -->
+                    <camera>
+                        <horizontal_fov>1.361357</horizontal_fov>
+                        <image>
+                        <width>1080</width>
+                        <height>810</height>
+                        </image>
+                        <clip>
+                            <near>0.2</near>
+                            <far>10.0</far>
+                        </clip>
+                        <xacro:if value="true">
+                            <!-- Noise addition -->
+                            <noise>
+                                <type>gaussian</type>
+                                <mean>0.0</mean>
+                                <stddev>0.015</stddev>
+                            </noise>
+                            <!-- Distorsion addition -->
+                            <distortion>
+                                <k1>-0.1</k1>
+                                <k2>0.02</k2>
+                                <k3>0.01</k3>
+                                <p1>0.0</p1>
+                                <p2>0.0</p2>
+                                <center>0.5 0.5</center>
+                            </distortion>
+                        </xacro:if>
+                    </camera>
+                    <always_on>1</always_on>
+                    <update_rate>30</update_rate>
+                    <visualize>true</visualize>
+                    <topic>pi_cam</topic>
+                </sensor>
+            </gazebo>
+        </xacro:if>
     </xacro:macro>
 </robot>
