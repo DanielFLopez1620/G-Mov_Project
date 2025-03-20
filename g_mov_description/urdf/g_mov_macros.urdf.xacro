@@ -180,6 +180,100 @@
             </gazebo>
         </xacro:if>
 
+        <link name="imu"/>
+        <joint name="imu_joint" type="fixed">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <parent link="accel"/>
+            <child link="imu"/>
+        </joint>
+        <xacro:if value="${gazebo}">
+            <gazebo>
+                <plugin
+                    filename="gz-sim-imu-system"
+                    name="gz::sim::systems::Imu">
+                </plugin>
+            </gazebo>
+            <gazebo reference="imu">
+                <sensor name="imu_sensor" type="imu">
+                    <always_on>1</always_on>
+                    <update_rate>50</update_rate>
+                    <imu>
+                    <enable_orientation>true</enable_orientation>
+                    <angular_velocity>
+                        <x>
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <stddev>0.009</stddev>
+                            <bias_mean>0.00075</bias_mean>
+                            <bias_stddev>0.005</bias_stddev>
+                            <dynamic_bias_stddev>0.00002</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>400.0</dynamic_bias_correlation_time>
+                            <precision>0.00025</precision>
+                        </noise>
+                        </x>
+                        <y>
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <stddev>0.009</stddev>
+                            <bias_mean>0.00075</bias_mean>
+                            <bias_stddev>0.005</bias_stddev>
+                            <dynamic_bias_stddev>0.00002</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>400.0</dynamic_bias_correlation_time>
+                            <precision>0.00025</precision>
+                        </noise>
+                        </y>
+                        <z>
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <stddev>0.009</stddev>
+                            <bias_mean>0.00075</bias_mean>
+                            <bias_stddev>0.005</bias_stddev>
+                            <dynamic_bias_stddev>0.00002</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>400.0</dynamic_bias_correlation_time>
+                            <precision>0.00025</precision>
+                        </noise>
+                        </z>
+                    </angular_velocity>
+                    <linear_acceleration>
+                        <x>
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <stddev>0.021</stddev>
+                            <bias_mean>0.05</bias_mean>
+                            <bias_stddev>0.0075</bias_stddev>
+                            <dynamic_bias_stddev>0.000375</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>175.0</dynamic_bias_correlation_time>
+                            <precision>0.005</precision>
+                        </noise>
+                        </x>
+                        <y>
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <stddev>0.021</stddev>
+                            <bias_mean>0.05</bias_mean>
+                            <bias_stddev>0.0075</bias_stddev>
+                            <dynamic_bias_stddev>0.000375</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>175.0</dynamic_bias_correlation_time>
+                            <precision>0.005</precision>
+                        </noise>
+                        </y>
+                        <z>
+                        <noise type="gaussian">
+                            <mean>0</mean>
+                            <stddev>0.021</stddev>
+                            <bias_mean>0.05</bias_mean>
+                            <bias_stddev>0.0075</bias_stddev>
+                            <dynamic_bias_stddev>0.000375</dynamic_bias_stddev>
+                            <dynamic_bias_correlation_time>175.0</dynamic_bias_correlation_time>
+                            <precision>0.005</precision>
+                        </noise>
+                        </z>
+                    </linear_acceleration>
+                    </imu>
+                </sensor>
+            </gazebo>
+        </xacro:if>
+
         <!-- Spacers -->
         <xacro:x4xgeneric_spacer id="${spacer}" element="accel_base" parent="accel_base"
             offset_x="${0.06365/2}" offset_y="${offset}" x="0" y="0" z="0.00175"/>
@@ -291,21 +385,6 @@
             <origin xyz="0.01 0.042 0" rpy="${-pi/2} 0 0"/>
         </joint>
         <xacro:if value="${gazebo}">
-        <gazebo>
-            <plugin
-                filename="gz-sim-joint-position-controller-system"
-                name="gz::sim::systems::JointPositionController">
-                <joint_name>${joint_prefix}_servo_conn_joint</joint_name>
-                <topic>g_mov_servo</topic>
-                <p_gain>1</p_gain>
-                <i_gain>0.1</i_gain>
-                <d_gain>0.01</d_gain>
-                <i_max>1</i_max>
-                <i_min>-1</i_min>
-                <cmd_max>1000</cmd_max>
-                <cmd_min>-1000</cmd_min>
-            </plugin>
-        </gazebo>
             <gazebo reference="servo_conn">
                 <mu1>1.0</mu1>
                 <mu2>1.0</mu2>
@@ -425,7 +504,6 @@
                     <always_on>1</always_on>
                     <update_rate>30</update_rate>
                     <visualize>true</visualize>
-                    <topic>pi_cam</topic>
                 </sensor>
             </gazebo>
         </xacro:if>
