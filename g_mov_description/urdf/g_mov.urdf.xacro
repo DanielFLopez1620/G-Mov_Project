@@ -1,11 +1,14 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="orion">
 
-    <xacro:property name="gazebo" value="false"/>
+    <xacro:property name="gazebo" value="$(arg gazebo)"/>
 
     <!-- Include other files -->
     <xacro:include filename="$(find g_mov_description)/urdf/g_mov_materials.urdf.xacro"/>
     <xacro:include filename="$(find g_mov_description)/urdf/g_mov_macros.urdf.xacro"/>
+    <xacro:if value="${gazebo}">
+        <xacro:include filename="$(find g_mov_description)/urdf/g_mov_gz.urdf.xacro"/>
+    </xacro:if>
 
     <link name="base_link"/>
     <xacro:g_mov_assem parent="base_link" spacer="m3x10" offset="${0.033/2}" 
