@@ -31,7 +31,7 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'robot_description': Command([
-                'xacro ', xacro_file, 
+                'xacro ', xacro_file, " gazebo:=false"
             ])
         }]
     )

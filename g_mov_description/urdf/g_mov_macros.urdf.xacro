@@ -28,6 +28,12 @@
                         iyy="8.648216387229408e-08" iyz="0"
                         izz="1.333016690879308e-08"/>
             </xacro:if>
+            <xacro:if value="${id == 'm3x15'}">
+                <mass value="0.0017"/>
+                <inertia ixx="5.2825999244689955e-08" ixy="0" ixz="0"
+                        iyy="5.4441082699086494e-08" iyz="0"
+                        izz="9.66508345439654e-09"/>
+            </xacro:if>
             <xacro:if value="${id == 'm3x10'}">
                 <mass value="0.0012"/>
                 <inertia ixx="1.2825999244689955e-08" ixy="0" ixz="0"
@@ -74,7 +80,7 @@
         <link name="g_mov_cam_link"/>
 
         <joint name="g_mov_cam_joint" type="fixed">
-            <origin xyz="${x} ${y} ${z}" rpy="${-pi/2} 0 0"/>
+            <origin xyz="${x} ${y} ${z}" rpy="0 0 0"/>
             <parent link="${parent}"/>
             <child link="g_mov_cam_link"/>
         </joint>
@@ -94,6 +100,9 @@
         <xacro:property name="heigh_level" value="0.005"/>
         <xacro:if value="${spacer == 'm3x20'}">
             <xacro:property name="heigh_level" value="0.020"/>
+        </xacro:if>
+        <xacro:if value="${spacer == 'm3x15'}">
+            <xacro:property name="heigh_level" value="0.015"/>
         </xacro:if>
         <xacro:if value="${spacer == 'm3x10'}">
             <xacro:property name="heigh_level" value="0.010"/>
@@ -256,7 +265,7 @@
         <joint name="servo_joint" type="fixed">
             <parent link="servo_base"/>
             <child link="servo"/>
-            <origin xyz="0 -0.0185 ${0.00175 + 0.01}" rpy="0 0 0"/>
+            <origin xyz="0 -0.01625 ${0.00175 + 0.01}" rpy="0 0 0"/>
         </joint>
         <xacro:if value="${gazebo}">
             <gazebo reference="servo">
@@ -370,16 +379,16 @@
         <joint name="picam_joint" type="fixed">
             <parent link="picam_sup"/>
             <child link="picam"/>
-            <origin xyz="0.038 -0.004 -0.0275" rpy="0 0 0"/>
+            <origin xyz="0.038 -0.004 -0.0275" rpy="${pi/2} 0 0"/>
         </joint>
         <xacro:if value="${gazebo}">
-            <gazebo reference="picam_sup">
+            <gazebo reference="picam">
                 <mu1>1.0</mu1>
                 <mu2>1.0</mu2>
             </gazebo>
         </xacro:if>
         <!-- Camera reference -->
-        <xacro:add_cam_links x="0.0065" y="-0.003" z="0" R="0" P="${pi/2}" Y="0"
+        <xacro:add_cam_links x="0.0065" y="-0.003" z="0" R="${-pi/2}" P="0" Y="${-pi/2}"
           parent="picam"/>
     
     </xacro:macro>

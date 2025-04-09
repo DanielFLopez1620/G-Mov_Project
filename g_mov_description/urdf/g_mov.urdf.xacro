@@ -11,7 +11,7 @@
     </xacro:if>
 
     <link name="base_link"/>
-    <xacro:g_mov_assem parent="base_link" spacer="m3x10" offset="${0.033/2}" 
+    <xacro:g_mov_assem parent="base_link" spacer="m3x20" offset="${0.033/2}" 
         x="0" y="0" z="0" joint_prefix="g_mov"/>
 
 </robot>
