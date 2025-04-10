@@ -24,7 +24,11 @@
 #include <sstream>  // String stream library 
 
 // -------------------------- CV RELATED LIBRARIES ----------------------------
-#include "cv_bridge/cv_bridge.h"  // ROS CV Bridge
+#ifdef ROS2_JAZZY
+  #include "cv_bridge/cv_bridge.hpp" // ROS CV Bridge for Jazzy and later
+#else 
+  #include "cv_bridge/cv_bridge.h" // ROS CV Bridge for Humble and before
+#endif
 #include "opencv2/core/mat.hpp"   // Matrix/Image datas for OpenCV
 #include "opencv2/videoio.hpp"    // Video input/ouput library
 
