@@ -48,7 +48,7 @@ class ThingsBoardToServo(Node):
         self.client = mqtt.Client()
         self.BROKER = 'mqtt.local'
         self.PORT = 1883
-        self.ACCESS_TOKEN = '2gImYrCCe2j29PRQcij8'
+        self.ACCESS_TOKEN = '<your_access_token>'
         
         # MQTT callbacks
         self.client.on_connect = self.on_connect  

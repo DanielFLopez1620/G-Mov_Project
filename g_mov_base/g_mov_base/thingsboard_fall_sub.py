@@ -33,7 +33,7 @@ class ThingsboardFallSubs(Node):
 
         # Set parameters for connection
         self.THINGSBOARD_HOST = 'mqtt.local'
-        self.ACCESS_TOKEN = '2gImYrCCe2j29PRQcij8'
+        self.ACCESS_TOKEN = '<your_access_token>'
         self.MQTT_TOPIC = 'v1/devices/me/telemetry'
 
         # Use dict to pass the data, that will be then converted in json

@@ -1,8 +1,50 @@
-# MQTT with TLS on local network with IP setup
+# Notes about MQTT with Mosquitto/Thingsboard
+
+This file aims to keep constancy of the steps made when setting up Mosquitto/Thingsboard broker in a local network with or without TLS/SSL for the IoT communication. For additional information refer to the links provided.
+
+## Thingsboard MQTT and Dashboard set up:
+
+For this project, it was used the Thingsboard Community Edition for Ubuntu. The instruction installations are provided in the next link: [Installing Thingsboard CE on Ubuntu Server](https://thingsboard.io/docs/user-guide/install/ubuntu/). However, some modifications were made to the installation:
+
+- PostgresSQL was selected as the ThingsBoard database.
+
+- In the steps were the IP 127.0.0.1 was selected (localhost), it was replaced with the IP of the machine in the local network desired for the application. It was also achieved by adding a custom host to the */etc/hosts* file (Check below in the Mosquitto section for more information), for example in the step:
+
+~~~bash
+# psql -U postgres -d postgres -h 127.0.0.1 -W
+psql -U postgres -d postgres -h <machine_ip> -W
+~~~
+
+- In the thingboard file, the *localhost* was replaced with the machine ip or hostname:
+
+~~~conf
+export DATABASE_TS_TYPE=sql
+# export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/thingsboard
+export SPRING_DATASOURCE_URL=jdbc:postgresql://<machine_ip>:5432/thingsboard
+export SPRING_DATASOURCE_USERNAME=postgres
+export SPRING_DATASOURCE_PASSWORD=PUT_YOUR_POSTGRESQL_PASSWORD_HERE
+export SQL_POSTGRES_TS_KV_PARTITIONING=MONTHS
+~~~
+
+- When asking about the queue service, *In Memory* was selected.
+
+- For checking the installation (after waiting 2 minutes for the restartup) use the machine ip, isntaed of localhost, to connect to the Dashboard online. It should also work with other devices over the network, just make sure that no firewall isn't blocking the connection:
+
+~~~link
+http://<maiche_ip>:8080/
+~~~
+
+## Thinsboard MQTT with TLS
+
+Although it was implemented at this point of the project, you can find more information on:
+
+- [MQTT over TLS | Thingsboard IO](https://thingsboard.io/docs/user-guide/mqtt-over-ssl/)
+
+## MQTT with TLS on local network with IP setup
 
 After some days of experimentation, reading about Mosquitto Broker, exploring Paho Python Library and having existencial crisis with the keys for TLS by using OpenSSL. I want to include here a brief guide on how to set up the everything in order to have your MQTT broker with TLS for experiments in your local network without having to buy a online service for this if you are not sure if the implementation will work.
 
-## Steps for configuring the keys on your PC
+### Steps for configuring the keys on your PC
 
 The PC in our case will act as our MQTT broker, for this consider the next steps:
 
@@ -18,7 +60,7 @@ sudo apt install mosquitto mosquitto-client
 # Python required
 pip3 install paho-mqtt
 ~~~
-
+https://thingsboard.io/docs/user-guide/install/ubuntu/
 2. Create a Certificate Authority Key (CA) key
 
 ~~~bash
@@ -154,7 +196,7 @@ client.tls_set(ca_certs=ca_cert,
                tls_version=ssl.PROTOCOL_TLSv1_2)
 client.tls_insecure_set(True)
 
-client.on_connect = on_connect
+client.on_connect = on_connectFor Mosquitto issues
 client.on_publish = on_publish
 
 client.connect(broker, port)
@@ -172,7 +214,7 @@ client.disconnect()
 print("Disconnected from broker")
 ~~~
 
-## Additional configurations for user and password
+### Additional configurations for user and password
 
 To prevent anonymous connections, you can set up a user and a password, for this you can follow the next steps:
 
@@ -209,7 +251,7 @@ mosquitto_pub -h <hostname/ip> -t "test/topic" -m "Hello MQTT over TLS" --cafile
 client.username_pw_set("<user>", "<password>")
 ~~~
 
-## Setting up raspberry pi
+### Setting up raspberry pi
 
 1. Make sure you have installed mosquitto on the Raspberry Pi
 
@@ -248,9 +290,9 @@ mosquitto_pub -h <hostname/ip> -t "test/topic" -m "Hello MQTT over TLS" --cafile
 
 But you should still need to use the **tls_insecure_set**. That is why we need to configure a hostname that will be covered in the next title.
 
-# MQTT with TLS on local network with hostname setup
+## MQTT with TLS on local network with hostname setup
 
-## MQTT set up for PC with hostname
+### MQTT set up for PC with hostname
 
 1. In your local PC add a new host with the IP of your broker, in this case, your own IP adress.
 
@@ -290,37 +332,37 @@ ping mqtt.local
 
 5. After this, you will need to generate new keys, you can generate them with a new name so you can use the previous one, in case you want to have the last configuration as a backup. Follow the next steps to configure the keys again.
 
-6. 
+6. Create a Certificate Authority Key (CA) key
 
 ~~~
 sudo openssl genpkey -algorithm RSA -out ca_certificates/ca_host.key
 ~~~
 
-7. 
+7. Create a self-signed CA certificate, make sure to add a **CN** name like "LocalCA" or "test" or related:
 
 ~~~bash
 sudo openssl req -new -x509 -days 365 -key ca_certificates/ca_host.key -out ca_certificates/ca_host.crt
 ~~~
 
-8. 
+8. Generate a server key
 
 ~~~bash
 sudo openssl genpkey -algorithm RSA -out /etc/mosquitto/certs/server_host.key
 ~~~
 
-9.
+9. Create a certificate signing request (CSR), make sure to add in the **CN** field the IP adress or hostname or FQDN of your server (your PC). Also do not use the same info for the company or city field, as if they are the same, the verification of the keys can be omitted, which can lead to future errors.
 
 ~~~bash
 sudo openssl req -new -key /etc/mosquitto/certs/server_host.key -out /etc/mosquitto/certs/server_host.csr
 ~~~
 
-10.
+10. Sign the server certificate using the CA certificate:
 
 ~~~bash
 sudo openssl x509 -req -in /etc/mosquitto/certs/server_host.csr -CA /etc/mosquitto/ca_certificates/ca_host.crt -CAkey /etc/mosquitto/ca_certificates/ca_host.key -CAcreateserial -out /etc/mosquitto/certs/server_host.crt -days 365
 ~~~
 
-11.
+11. Edit the mosquitto configuration
 
 ~~~bash
 sudo nano /etc/mosquitto/mosquitto.conf
@@ -350,13 +392,13 @@ require_certificate false
 password_file /etc/mosquitto/passwd
 ~~~
 
-12. 
+12. Restart mosquito services
 
 ~~~
 sudo systemctl restart mosquitto
 ~~~
 
-## MQTT set up for raspberry with hostname
+### MQTT set up for raspberry with hostname
 
 1. In your local PC add a new host with the IP of your broker, in this case, your own IP adress.
 
@@ -374,7 +416,7 @@ sudo nano /etc/hosts
 192.168.x.x   mqtt.local
 ~~~
 
-2. Install avahi to resolve the hostname using mDNS:
+2. Install avahi to resolve the hostname using DNS:
 
 ~~~bash
 sudo apt update
@@ -405,6 +447,13 @@ sudo ip link set docker<id> down
 - If you are not sure about the IP or hostname you set up, it is better to add new keys.
 
 - Remember, do not use the same city, location, company and unit info for CA and server keys, as it will lead to ignore a validation of the keys. Of just one character change, it will be enough
+
+- Keep in mind that Thingsboard service may take 2 minutes to restart if you made some changes to the Thignsboard config or yaml file, this also applies for start up. In case, the startup doesn't apply the proper IP configuration, you should restart postgres and thingsboard services:
+
+~~~bash
+sudo systemctl restart postgres # It can also be postgres.service
+sudo systemctl restart thingsboard.service
+~~~
 
 ## Sources and References
 

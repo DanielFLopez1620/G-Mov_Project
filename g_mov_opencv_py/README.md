@@ -82,6 +82,7 @@ source install/setup.bash
 ros2 run g_mov_opencv_py fall_detect_img_raw_gui.py 
 ~~~
 
+Refer to [g_mov_base](/g_mov_base/README.md) package in order to check full installation, dependencies and main launch execution.
 
 ## Troubleshooting:
 
@@ -98,6 +99,8 @@ sudo chmod 666 /dev/video<num_of_camera>
 pip3 uninstall matplotlib
 pip3 install matplotlib
 ~~~
+
+- Be careful wiht the versions you install of OpenCV and Mediapipe, as they must be compatible. Otherwise, the codes won't work.
 
 
 ## Recommended resources:

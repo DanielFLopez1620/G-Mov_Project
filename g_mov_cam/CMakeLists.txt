@@ -19,17 +19,21 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
-include_directories(include)
+if(DEFINED ENV{ROS_DISTRO})
+  message(STATUS "Building for ROS 2: $ENV{ROS_DISTRO}")
+  if("$ENV{ROS_DISTRO}" STREQUAL "jazzy")
+    add_compile_definitions(ROS2_JAZZY)
+  endif()
+endif()
 
 add_executable(custom_image_transport src/custom_image_transport.cpp)
-target_link_libraries(custom_image_transport
-  cv_bridge::cv_bridge
-  image_transport::image_transport
-  opencv_highgui
-  opencv_videoio
-  rclcpp::rclcpp
-  "${sensor_msgs_TARGETS}"
-  "${std_msgs_TARGETS}"
+ament_target_dependencies(custom_image_transport
+  rclcpp
+  std_msgs
+  sensor_msgs
+  cv_bridge
+  image_transport
+  OpenCV
 )
 
 
@@ -39,11 +43,6 @@ install(
   RUNTIME DESTINATION lib/${PROJECT_NAME}
 )
 
-# Install include directories
-install(
-  DIRECTORY include/
-  DESTINATION include/${PROJECT_NAME}
-)
 
 ament_export_include_directories(include)
 ament_export_dependencies(cv_bridge image_transport rclcpp sensor_msgs std_msgs)

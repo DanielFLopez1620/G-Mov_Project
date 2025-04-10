@@ -38,8 +38,8 @@ class MosquittoServoSubs(Node):
         self.MQTT_TOPIC = "sensors/servo"
         self.MQTT_CLIENT_ID = "mqtt_pub_servo_client"
         self.MQTT_CA_CERT = "/etc/mosquitto/ca_certificates/ca_host.crt"
-        self.MQTT_USER = "Dan1620"
-        self.MQTT_PASSWORD = "h1d4n16"
+        self.MQTT_USER = "<YourUser>"
+        self.MQTT_PASSWORD = "<YourPassword>"
 
         # Instance mosquitto client with proper auth and certificates
         self.mqtt_client = mqtt.Client(client_id=self.MQTT_CLIENT_ID)
