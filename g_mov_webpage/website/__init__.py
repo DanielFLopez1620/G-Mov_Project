@@ -21,7 +21,7 @@ def create_app():
     app.config['REMEMBER_COOKIE_SECURE'] = True  # Usar HTTPS
     app.config['REMEMBER_COOKIE_HTTPONLY'] = True  # Evitar acceso a la cookie desde JavaScript
 
-    # Importar los módulos de vistas y autenticación
+    # Importar los módulos de vistas y autenticación.
     from .views import views
     from .auth import auth
 
