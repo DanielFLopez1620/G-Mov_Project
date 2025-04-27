@@ -16,8 +16,10 @@
   <depend>image_transport</depend>
   <depend>python3-opencv</depend>
   <depend>python3-numpy</depend>
-  <depend>python3-mediapipe</depend>
   <depend>v4l2_camera</depend>
+  
+  <!-- Mediapipe is required but not managed here due to incompabilities with Ubuntu 24.04-->
+  <!--depend>python3-mediapipe</depend-->
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>
